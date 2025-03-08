@@ -20,6 +20,7 @@ export type Note = {
   isPublished: boolean;
   publishedAt: string;
   inProgress: boolean;
+  isProd: boolean;
 };
 
 const noop = async (block: BlockObjectResponse) => block;
@@ -165,9 +166,12 @@ class NotesApi {
             'date' in page.properties.publishedAt ? page.properties.publishedAt.date!.start : '',
           inProgress:
             'checkbox' in page.properties.inProgress ? page.properties.inProgress.checkbox : false,
+          isProd:
+            'checkbox' in page.properties.isProd ? page.properties.isProd.checkbox : false,
         };
       })
-      .filter((post) => post.isPublished);
+      .filter((post) => post.isPublished && (process.env.NODE_ENV !== 'production' || post.isProd));
+      //.filter((post) => post.isPublished);
   };
 
   private getPageContent = async (pageId: string) => {
