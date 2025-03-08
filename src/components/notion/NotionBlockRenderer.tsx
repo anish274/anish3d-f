@@ -153,9 +153,39 @@ export const NotionBlockRenderer = ({ block }: Props) => {
     case 'bookmark':
       const href = value.url;
       return (
-        <a href={href} target="_brank">
-          {href}
-        </a>
+        <div className="my-4 border border-gray-200 rounded-md overflow-hidden hover:shadow-md transition-shadow">
+          <a href={href} target="_blank" rel="noopener noreferrer" className="block p-4">
+            <div className="flex items-center">
+              <div className="mr-3 text-blue-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </div>
+              <div className="flex-1 text-blue-600 font-medium overflow-hidden text-ellipsis whitespace-nowrap">
+                {href}
+              </div>
+            </div>
+          </a>
+        </div>
+      );
+      
+    case 'callout':
+      return (
+        <div className="flex p-4 my-4 bg-gray-100 dark:bg-zinc-800 rounded-md dark:text-zinc-300">
+          <div className="mr-4 text-2xl">
+            {value.icon?.type === 'emoji' ? value.icon.emoji : '💡'}
+          </div>
+          <div className="flex-1 [&>h3]:mt-0">
+            <div className="mb-2">
+              <NotionText textItems={value.rich_text} />
+            </div>
+            {value.children?.map((block: any) => (
+              <NotionBlockRenderer key={block.id} block={block} />
+            ))}
+          </div>
+        </div>
       );
       
     case 'column_list':
@@ -178,6 +208,7 @@ export const NotionBlockRenderer = ({ block }: Props) => {
           )}
         </div>
       );
+      
     default:
       return (
         <>❌ Unsupported block (${type === 'unsupported' ? 'unsupported by Notion API' : type})</>

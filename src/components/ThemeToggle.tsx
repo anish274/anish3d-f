@@ -9,7 +9,14 @@ export const ThemeToggle = () => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+    // Set theme to dark by default when component mounts
+    if (!localStorage.getItem('theme')) {
+      setTheme('dark');
+    }
+  }, [setTheme]);
+  
   if (!mounted) return null;
 
   return (
