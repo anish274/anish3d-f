@@ -5,6 +5,25 @@ import Link from 'next/link';
 
 import { Quote } from '../Quote';
 
+const shimmer = (w: number, h: number) => `
+<svg width="${w}" height="${h}" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient id="g">
+      <stop stop-color="#333" offset="20%" />
+      <stop stop-color="#222" offset="50%" />
+      <stop stop-color="#333" offset="70%" />
+    </linearGradient>
+  </defs>
+  <rect width="${w}" height="${h}" fill="#333" />
+  <rect id="r" width="${w}" height="${h}" fill="url(#g)" />
+  <animate xlink:href="#r" attributeName="x" from="-${w}" to="${w}" dur="1s" repeatCount="indefinite"  />
+</svg>`;
+
+const toBase64 = (str: string) =>
+  typeof window === "undefined"
+    ? Buffer.from(str).toString("base64")
+    : window.btoa(str);
+
 //TODO: improve types here, cleanup the code
 type Props = {
   block: any;
@@ -42,7 +61,7 @@ export const NotionBlockRenderer = ({ block }: Props) => {
     case 'bulleted_list':
       return (
         <ul className="list-outside list-disc">
-          {value.children.map((block: any) => (
+          {value.children?.map((block: any) => (
             <NotionBlockRenderer key={block.id} block={block} />
           ))}
         </ul>
@@ -50,7 +69,7 @@ export const NotionBlockRenderer = ({ block }: Props) => {
     case 'numbered_list':
       return (
         <ol className="list-outside list-decimal">
-          {value.children.map((block: any) => (
+          {value.children?.map((block: any) => (
             <NotionBlockRenderer key={block.id} block={block} />
           ))}
         </ol>
@@ -61,7 +80,7 @@ export const NotionBlockRenderer = ({ block }: Props) => {
         <li className="pl-0">
           <NotionText textItems={value.rich_text} />
           {!!value.children &&
-            value.children.map((block: any) => (
+            value.children?.map((block: any) => (
               <NotionBlockRenderer key={block.id} block={block} />
             ))}
         </li>
@@ -98,9 +117,9 @@ export const NotionBlockRenderer = ({ block }: Props) => {
             placeholder="blur"
             src={src}
             alt={caption}
-            blurDataURL={value.placeholder}
-            width={value.size.width}
-            height={value.size.height}
+            blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(700, 475))}`}
+            width={value.size?.width || 400}
+            height={value.size?.height || 300}
           />
           {caption && <figcaption>{caption}</figcaption>}
         </figure>
@@ -137,6 +156,27 @@ export const NotionBlockRenderer = ({ block }: Props) => {
         <a href={href} target="_brank">
           {href}
         </a>
+      );
+      
+    case 'column_list':
+      return (
+        <div className="flex flex-col md:flex-row gap-4">
+          {value.children?.map((column: any) => (
+            <NotionBlockRenderer key={column.id} block={column} />
+          ))}
+        </div>
+      );
+    case 'column':
+      return (
+        <div className="flex-1 border border-gray-200 rounded p-2 min-h-[100px]">
+          {value.children && value.children.length > 0 ? (
+            value.children.map((child: any) => (
+              <NotionBlockRenderer key={child.id} block={child} />
+            ))
+          ) : (
+            <p className="text-gray-400 text-sm">Empty column</p>
+          )}
+        </div>
       );
     default:
       return (

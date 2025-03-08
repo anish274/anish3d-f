@@ -173,59 +173,73 @@ class NotesApi {
       .filter((post) => post.isPublished && (process.env.NODE_ENV !== 'production' || post.isProd));
       //.filter((post) => post.isPublished);
   };
-
   private getPageContent = async (pageId: string) => {
-    const blocks = await this.getBlocks(pageId);
-
-    const blocksChildren = await Promise.all(
-      blocks.map(async (block) => {
-        const { id } = block;
-        const contents = block[block.type as keyof typeof block] as any;
-        if (!['unsupported', 'child_page'].includes(block.type) && block.has_children) {
-          contents.children = await this.getBlocks(id);
-        }
-
-        return block;
-      }),
-    );
-
-    return Promise.all(
-      blocksChildren.map(async (block) => {
-        return BlockTypeTransformLookup[block.type as BlockType](block);
-      }),
-    ).then((blocks) => {
-      return blocks.reduce((acc: any, curr) => {
-        if (curr.type === 'bulleted_list_item') {
-          if (acc[acc.length - 1]?.type === 'bulleted_list') {
-            acc[acc.length - 1][acc[acc.length - 1].type].children?.push(curr);
-          } else {
-            acc.push({
-              type: 'bulleted_list',
-              bulleted_list: { children: [curr] },
-            });
+      const blocks = await this.getBlocks(pageId);
+  
+      const blocksChildren = await Promise.all(
+        blocks.map(async (block) => {
+          const { id } = block;
+          const contents = block[block.type as keyof typeof block] as any;
+          if (!['unsupported', 'child_page'].includes(block.type) && block.has_children) {
+            const childBlocks = await this.getBlocks(id);
+            
+            // For column_list and column blocks, recursively fetch their children
+            if (block.type === 'column_list' || block.type === 'column') {
+              const processedChildBlocks = await Promise.all(
+                childBlocks.map(async (childBlock) => {
+                  if (childBlock.has_children) {
+                    const childContents = childBlock[childBlock.type as keyof typeof childBlock] as any;
+                    childContents.children = await this.getBlocks(childBlock.id);
+                  }
+                  return childBlock;
+                })
+              );
+              contents.children = processedChildBlocks;
+            } else {
+              contents.children = childBlocks;
+            }
           }
-        } else if (curr.type === 'numbered_list_item') {
-          if (acc[acc.length - 1]?.type === 'numbered_list') {
-            acc[acc.length - 1][acc[acc.length - 1].type].children?.push(curr);
+  
+          return block;
+        }),
+      );
+  
+      return Promise.all(
+        blocksChildren.map(async (block) => {
+          return BlockTypeTransformLookup[block.type as BlockType](block);
+        }),
+      ).then((blocks) => {
+        return blocks.reduce((acc: any, curr) => {
+          if (curr.type === 'bulleted_list_item') {
+            if (acc[acc.length - 1]?.type === 'bulleted_list') {
+              acc[acc.length - 1][acc[acc.length - 1].type].children?.push(curr);
+            } else {
+              acc.push({
+                type: 'bulleted_list',
+                bulleted_list: { children: [curr] },
+              });
+            }
+          } else if (curr.type === 'numbered_list_item') {
+            if (acc[acc.length - 1]?.type === 'numbered_list') {
+              acc[acc.length - 1][acc[acc.length - 1].type].children?.push(curr);
+            } else {
+              acc.push({
+                type: 'numbered_list',
+                numbered_list: { children: [curr] },
+              });
+            }
           } else {
-            acc.push({
-              type: 'numbered_list',
-              numbered_list: { children: [curr] },
-            });
+            acc.push(curr);
           }
-        } else {
-          acc.push(curr);
-        }
-        return acc;
-      }, []);
-    });
-  };
-
+          return acc;
+        }, []);
+      });
+    };
   private getBlocks = async (blockId: string) => {
     const list = await this.notion.blocks.children.list({
       block_id: blockId,
     });
-
+  
     while (list.has_more && list.next_cursor) {
       const { results, has_more, next_cursor } = await this.notion.blocks.children.list({
         block_id: blockId,
@@ -235,8 +249,11 @@ class NotesApi {
       list.has_more = has_more;
       list.next_cursor = next_cursor;
     }
-
-    return list.results as BlockObjectResponse[];
+  
+    // Process blocks to handle column_list and column blocks
+    const blocks = list.results as BlockObjectResponse[];
+    
+    return blocks;
   };
 }
 
