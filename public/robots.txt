@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://jarocki.me
+Host: https://anish3d.com
 
 # Sitemaps
-Sitemap: https://jarocki.me/sitemap.xml
+Sitemap: https://anish3d.com/sitemap.xml

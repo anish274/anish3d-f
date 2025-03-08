@@ -1,8 +1,8 @@
 ![screenshot](screenshots/screenshot.png)
 
-# Bartosz Jarocki - Personal website built using Next.js and Notion as headless CMS
+# Anish Shah - Personal website built using Next.js and Notion as headless CMS (Original by Bartosz Jarocki)
 
-This is my personal website built using
+This is my personal website I have forked originally built using
 
 - [TypeScript](https://www.typescriptlang.org/)
 - [Next JS](https://nextjs.org/)
@@ -41,8 +41,8 @@ Here's how the database in Notion should look like:
 After defining environment variables and your Notion database, run the application
 
 ```bash
-git clone https://github.com/BartoszJarocki/web-jarocki-me
-cd web-jarocki-me
+git clone https://github.com/anish274/anish3d.com-f
+cd anish3d.com-f
 yarn
 yarn dev
 ```
@@ -52,10 +52,10 @@ yarn dev
 Application generates Open Graph images automatically using lambda functions and Puppetter
 
 Main page example
-![main page OG image](https://jarocki.me/api/og?title=Bartosz%20Jarocki&description=A%20passionate%20software%20engineer%20with%20an%20eye%20for%20details%20based%20in%20Wroc%C5%82aw,%20Poland.)
+![main page OG image](https://anish3d.com/api/og?title=Bartosz%20Jarocki&description=A%20passionate%20software%20engineer%20with%20an%20eye%20for%20details%20based%20in%20Wroc%C5%82aw,%20Poland.)
 
 Blog post example
-![blog post OG image](https://jarocki.me/api/og?title=Monito,%20two%20weeks%20after%20launch&description=No%20audience,%20just%20Product%20Hunt%20and%20Hacker%20News%20launch.%20How%20did%20it%20go?)
+![blog post OG image](https://anish3d.com/api/og?title=Monito,%20two%20weeks%20after%20launch&description=No%20audience,%20just%20Product%20Hunt%20and%20Hacker%20News%20launch.%20How%20did%20it%20go?)
 
 ## Credits
 

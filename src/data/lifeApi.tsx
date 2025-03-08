@@ -21,7 +21,7 @@ import YearProgressLogo from '../images/logos/yearprogress.svg';
 import Minimal from '../images/logos/minimal.svg';
 import { LinkedInIcon } from '../components/icons/LinkedInIcon';
 
-export const Name = 'Bartosz Jarocki';
+export const Name = 'Anish Shah';
 
 export const About = (
   <>

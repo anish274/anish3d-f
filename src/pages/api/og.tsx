@@ -28,7 +28,7 @@ const generateImage = async (req: NextRequest) => {
             </div>
             <img
               tw="rounded-lg w-32 h-32 self-end ml-auto"
-              src="https://jarocki.me/assets/blog/authors/bartosz.jpeg"
+              src="https://anish3d.com/assets/blog/authors/bartosz.jpeg"
               alt="Avatar"
             />
           </div>

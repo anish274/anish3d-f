@@ -11,7 +11,7 @@ import { NotePreview } from '../components/notes/NotePreview';
 import { About, Name, SocialMedia } from '../data/lifeApi';
 import { Note, notesApi } from '../lib/notesApi';
 
-const seoTitle = 'Bartosz Jarocki';
+const seoTitle = 'Anish Shah';
 const seoDescription =
   'A passionate software engineer with an eye for details based in Wrocław, Poland.';
 
