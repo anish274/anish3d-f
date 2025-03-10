@@ -18,7 +18,7 @@ export const Footer = () => {
                 ))}
               </div>
               <p className="text-sm text-zinc-400 dark:text-zinc-500">
-                &copy; {new Date().getFullYear()} Anish Shah. All rights reserved.
+&copy; {new Date().getFullYear()} {process.env.NEXT_PUBLIC_FULL_NAME}. All rights reserved.
               </p>
             </div>
           </Container.Inner>

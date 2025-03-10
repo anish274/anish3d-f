@@ -5,14 +5,16 @@ import React from 'react';
 export interface Props {
   className?: string;
   href: string;
+  target: string;
   icon: React.ElementType;
   children?: React.ReactNode;
 }
 
-export const SocialLink = ({ className, href, children, icon: Icon }: Props) => {
+export const SocialLink = ({ className, href, children, icon: Icon}: Props) => {
   return (
     <li className={clsx(className, 'flex')}>
       <Link
+        target="_blank"
         href={href}
         className="group flex text-sm font-medium text-zinc-800 transition hover:text-primary dark:text-zinc-200"
       >

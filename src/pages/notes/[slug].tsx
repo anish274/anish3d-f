@@ -1,7 +1,10 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { ArticleJsonLd, NextSeo } from 'next-seo';
 import Prism from 'prismjs';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import Lightbox from "yet-another-react-lightbox";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import "yet-another-react-lightbox/styles.css";
 
 import { XIcon } from '../../components/icons/XIcon';
 import { NoteLayout } from '../../components/notes/NoteLayout';
@@ -20,10 +23,53 @@ export default function Note({
 }: Props & { previousPathname: string }) {
   const url = `${process.env.NEXT_PUBLIC_URL}/notes/${slug}`;
   const openGraphImageUrl = `${process.env.NEXT_PUBLIC_URL}/api/og?title=${title}&description=${description}`;
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [images, setImages] = useState<Array<{ src: string; alt?: string }>>([]);
 
   useEffect(() => {
     Prism.highlightAll();
   }, []);
+
+  // Add click handler for images
+  useEffect(() => {
+    const handleImageClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'IMG' && !target.closest('.no-popup')) {
+        e.preventDefault();
+        const clickedSrc = (target as HTMLImageElement).src;
+        const clickedAlt = (target as HTMLImageElement).alt || 'Image';
+        
+        // Collect all images on the page
+        const allImages = Array.from(document.querySelectorAll('img:not(.no-popup)'))
+          .map((img: HTMLImageElement) => ({
+            src: img.src,
+            alt: img.alt || 'Image'
+          }));
+        
+        setImages(allImages);
+        // Find the index of the clicked image
+        const index = allImages.findIndex(img => img.src === clickedSrc);
+        setLightboxIndex(index >= 0 ? index : 0);
+        setLightboxOpen(true);
+      }
+    };
+
+    document.addEventListener('click', handleImageClick);
+    return () => document.removeEventListener('click', handleImageClick);
+  }, []);
+
+  // Add this effect to apply the cursor style to all images
+  useEffect(() => {
+    const images = document.querySelectorAll('img:not(.no-popup)');
+    images.forEach(img => {
+      img.style.cursor = 'pointer';
+    });
+    
+    return () => {
+      // Clean up if needed
+    };
+  }, [noteContent]);
 
   return (
     <>
@@ -65,6 +111,29 @@ export default function Note({
           </a>
         </div>
       </NoteLayout>
+
+      <Lightbox
+        open={lightboxOpen}
+        close={() => setLightboxOpen(false)}
+        slides={images}
+        index={lightboxIndex}
+        plugins={[Zoom]}
+        carousel={{ finite: true, preload: 0 }}
+        zoom={{
+          maxZoomPixelRatio: 3,
+          zoomInMultiplier: 1.2,
+          doubleTapDelay: 300,
+          doubleClickDelay: 300,
+          doubleClickMaxStops: 2,
+          keyboardMoveDistance: 50,
+          wheelZoomDistanceFactor: 100,
+          pinchZoomDistanceFactor: 100,
+        }}
+        render={{
+          buttonPrev: () => null,
+          buttonNext: () => null,
+        }}
+      />
     </>
   );
 }

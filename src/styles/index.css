@@ -15,3 +15,8 @@
 .text-balance {
   text-wrap: balance;
 }
+
+/* Add this to your existing CSS */
+a, .underline, u {
+  text-underline-offset: 0.18em;
+}

@@ -21,16 +21,19 @@ import YearProgressLogo from '../images/logos/yearprogress.svg';
 import Minimal from '../images/logos/minimal.svg';
 import { LinkedInIcon } from '../components/icons/LinkedInIcon';
 
-export const Name = 'Anish Shah';
+export const Name = process.env.NEXT_PUBLIC_FULL_NAME;
 
 export const About = (
   <>
-    {`I used to consider myself a software engineer, but the reality is that I simply enjoy creating things. If you'd like to get in touch,`}{' '}
+    <div dangerouslySetInnerHTML={{ __html: process.env.NEXT_PUBLIC_HOME_PAGE_MY_DETAILS || '' }} />
     <ExternalLink href="mailto:bartosz@jarocki.me">send me an email.</ExternalLink>
   </>
 );
-export const AboutExtended = `I live in Wrocław, Poland, having grown up in the small town of Góra in the western part of the country. I have a bachelor's degree in Control Systems Engineering and Robotics from the Wrocław University of Technology. I like programming, books, plants, mountain biking, whisky, and traveling the world with my wife, Kasia. The cosmos fascinates me, and I take great delight in gazing at the stars.`;
-
+export const AboutExtended = (
+  <>
+    <div dangerouslySetInnerHTML={{ __html: process.env.NEXT_PUBLIC_ABOUT_PAGE_EXTENDED || '' }} />
+  </>
+);
 export type Project = {
   title: string;
   techStack: string[];
@@ -185,10 +188,10 @@ export const MyPastProjects: Project[] = [
 ];
 
 export const SocialMedia = [
-  { name: 'Twitter', link: 'https://twitter.com/BartoszJarocki', icon: XIcon },
-  { name: 'Instagram', link: 'https://www.instagram.com/bartosz.jarocki/', icon: InstagramIcon },
-  { name: 'Github', link: 'https://github.com/BartoszJarocki', icon: GitHubIcon },
-  { name: 'LinkedIn', link: 'https://www.linkedin.com/in/bjarocki', icon: LinkedInIcon },
+  { name: 'Twitter', link: 'https://x.com/anish_journey', icon: XIcon},
+  { name: 'Instagram', link: 'https://www.instagram.com/anish.journey/', icon: InstagramIcon },
+  { name: 'Github', link: 'https://github.com/anish274', icon: GitHubIcon},
+  { name: 'LinkedIn', link: 'https://www.linkedin.com/in/anish3d', icon: LinkedInIcon },
 ] as const;
 
 export const Work = [

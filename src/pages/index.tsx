@@ -11,9 +11,8 @@ import { NotePreview } from '../components/notes/NotePreview';
 import { About, Name, SocialMedia } from '../data/lifeApi';
 import { Note, notesApi } from '../lib/notesApi';
 
-const seoTitle = 'Anish Shah';
-const seoDescription =
-  'A passionate software engineer with an eye for details based in Wrocław, Poland.';
+const seoTitle = `${process.env.NEXT_PUBLIC_FULL_NAME || ''} ${process.env.NEXT_PUBLIC_SITE_DESC || ''}`.trim();
+const seoDescription = process.env.NEXT_PUBLIC_HOME_PAGE_SEO_DESC;
 
 type Props = {
   latestNotes: Note[];
@@ -35,13 +34,14 @@ export default function Home({ latestNotes }: Props) {
         }}
       />
       <Container className="mt-9">
-        <div className="max-w-2xl">
+        <div className=" ">
           <PageTitle>{Name}</PageTitle>
-          <p className="mt-6 max-w-2xl text-base text-balance">{About}</p>
+          <div className="mt-6 m text-base text-balance">{About}</div>
           <div className="mt-6 flex gap-6">
             {SocialMedia.map((socialProfile) => (
               <SocialLink
                 key={socialProfile.name}
+                target='_blank'
                 aria-label={`Follow on ${socialProfile.name}`}
                 href={socialProfile.link}
                 icon={socialProfile.icon}

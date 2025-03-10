@@ -21,8 +21,11 @@ import {
   VideosWorthWatching,
 } from '../data/lifeApi';
 
-const seoTitle = `About`;
-const seoDescription = `A few words about me.`;
+const seoTitle = `${'About Me - '} ${process.env.NEXT_PUBLIC_FULL_NAME || ''} ${process.env.NEXT_PUBLIC_SITE_DESC || ''}`.trim();
+const seoDescription = process.env.NEXT_PUBLIC_HOME_PAGE_SEO_DESC;
+
+// const seoTitle = `About`;
+// const seoDescription = `A few words about me.`;
 
 export default function AboutMe() {
   const randomQuote = useMemo(() => Quotes[Math.floor(Math.random() * Quotes.length)], []);
@@ -59,6 +62,7 @@ export default function AboutMe() {
             <div className="mt-6 flex gap-6">
               {SocialMedia.map((socialProfile) => (
                 <SocialLink
+                  target='_blank'
                   key={socialProfile.name}
                   aria-label={`Follow on ${socialProfile.name}`}
                   href={socialProfile.link}

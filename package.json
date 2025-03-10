@@ -34,7 +34,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "rss": "^1.2.2",
-    "sharp": "^0.32.6"
+    "sharp": "^0.32.6",
+    "yet-another-react-lightbox": "^3.21.7"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.0.0",

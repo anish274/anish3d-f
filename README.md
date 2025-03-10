@@ -12,6 +12,14 @@ This is my personal website I have forked originally built using
 - [NextSEO](https://github.com/garmeeh/next-seo)
 - [Vercel OG](https://vercel.com/docs/concepts/functions/edge-functions/og-image-generation)
 
+## Additional Implementation 
+
+- Different articles for local environments and Production Website articles.
+- [Notion Column List and Column Support](https://developers.notion.com/changelog/column-list-and-column-support)
+- [Notion Callout and Quote and Bookmark Type Support](https://developers.notion.com/changelog/callouts-and-quote-blocks-are-now-supported)
+- [Lightbox Image Gallery Support](https://yet-another-react-lightbox.com/)
+
+
 ## Running locally
 
 To run application locally few environment variables have to be defined (in `.env.local`):
