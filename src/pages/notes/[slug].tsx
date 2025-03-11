@@ -42,10 +42,13 @@ export default function Note({
         
         // Collect all images on the page
         const allImages = Array.from(document.querySelectorAll('img:not(.no-popup)'))
-          .map((img: HTMLImageElement) => ({
-            src: img.src,
-            alt: img.alt || 'Image'
-          }));
+          .map((element) => {
+            const img = element as HTMLImageElement;
+            return {
+              src: img.src,
+              alt: img.alt || 'Image'
+            };
+          });
         
         setImages(allImages);
         // Find the index of the clicked image
