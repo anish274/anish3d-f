@@ -66,7 +66,7 @@ export default function Note({
   useEffect(() => {
     const images = document.querySelectorAll('img:not(.no-popup)');
     images.forEach(img => {
-      img.style.cursor = 'pointer';
+      (img as HTMLElement).style.cursor = 'pointer';
     });
     
     return () => {
