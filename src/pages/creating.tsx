@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
 import { NextSeo } from 'next-seo';
+import { GetStaticProps } from 'next';
+import Error from 'next/error';
 
 import { PageLayout } from '../components/PageLayout';
 import { ProjectCard } from '../components/ProjectCard';
@@ -9,7 +11,12 @@ import { ANIMATION_FROM_PROPS, ANIMATION_TO_PROPS } from '../lib/animation';
 const seoTitle = 'Creating';
 const seoDescription = "Things I've made trying to put my dent in the universe.";
 
-export default function Creating() {
+export default function Creating({ hidePage }: { hidePage: boolean }) {
+  // Return 404 page if hidePage is true
+  if (hidePage) {
+    return <Error statusCode={404} />;
+  }
+
   return (
     <>
       <NextSeo
@@ -70,3 +77,15 @@ export default function Creating() {
     </>
   );
 }
+
+export const getStaticProps: GetStaticProps = async () => {
+  // Check if HIDE_PAGE_CREATING is defined and set to TRUE
+  // Note: Environment variables are always strings, so we need to check for 'TRUE' or 'true'
+  const hidePageCreating = process.env.HIDE_PAGE_CREATING?.toUpperCase() === 'TRUE';
+  
+  return {
+    props: {
+      hidePage: hidePageCreating,
+    },
+  };
+};

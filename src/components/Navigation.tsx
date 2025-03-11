@@ -7,6 +7,9 @@ import { Fragment } from 'react';
 import { ChevronDownIcon } from './icons/ChevronDownIcon';
 import { CloseIcon } from './icons/CloseIcon';
 
+// Get the environment variable to determine if Creating page should be hidden
+// const hideCreatingPage = process.env.HIDE_PAGE_CREATING?.toUpperCase() === 'TRUE';
+
 export const NavigationItems = [
   {
     name: 'Home',
@@ -18,11 +21,12 @@ export const NavigationItems = [
     href: '/notes',
     type: 'internal',
   },
-  {
-    name: 'Creating',
-    href: '/creating',
-    type: 'internal',
-  },
+  // // Only include Creating if not hidden
+  // ...(!hideCreatingPage ? [{
+  //   name: 'Creating',
+  //   href: '/creating',
+  //   type: 'internal',
+  // }] : []),
   {
     name: 'Uses',
     href: '/uses',
