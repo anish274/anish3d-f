@@ -21,22 +21,21 @@ export const NavigationItems = [
     href: '/notes',
     type: 'internal',
   },
-  // // Only include Creating if not hidden
-  // ...(!hideCreatingPage ? [{
-  //   name: 'Creating',
-  //   href: '/creating',
-  //   type: 'internal',
-  // }] : []),
+  {
+    name: 'Creating',
+    href: '/creating',
+    type: 'internal',
+  },
   {
     name: 'Uses',
     href: '/uses',
     type: 'internal',
   },
-  {
-    name: 'Resume',
-    href: 'https://cv.jarocki.me',
-    type: 'external',
-  },
+  // {
+  //   name: 'Resume',
+  //   href: 'https://cv.jarocki.me',
+  //   type: 'external',
+  // },
   {
     name: 'About',
     href: '/about',
@@ -45,16 +44,29 @@ export const NavigationItems = [
 ] as const;
 
 export const NavLink = ({ href, children }: React.PropsWithChildren<{ href: string }>) => {
-  return (
-    <Link href={href} className="transition hover:text-primary">
-      {children}
-    </Link>
-  );
+  // Check if this href is in the NEXT_PUBLIC_MAKE_PAGE_404 list
+  const pagesToHide = process.env.NEXT_PUBLIC_MAKE_PAGE_404?.split(',') || [];
+  
+  if (pagesToHide.includes(href)) {
+    console.log(pagesToHide);
+  } else {
+    return (
+      <Link href={href} className="transition hover:text-primary">
+        {children}
+      </Link>
+    );
+  }
+
 };
 
 const NavItem = ({ href, children }: React.PropsWithChildren<{ href: string }>) => {
   const isActive = useRouter().pathname === href;
-
+// Check if this href is in the NEXT_PUBLIC_MAKE_PAGE_404 list
+const pagesToHide = process.env.NEXT_PUBLIC_MAKE_PAGE_404?.split(',') || [];
+  
+if (pagesToHide.includes(href)) {
+  console.log(pagesToHide);
+} else {
   return (
     <li>
       <Link
@@ -68,6 +80,8 @@ const NavItem = ({ href, children }: React.PropsWithChildren<{ href: string }>) 
       </Link>
     </li>
   );
+}
+  
 };
 
 export const MobileNavItem = ({ href, children }: React.PropsWithChildren<{ href: string }>) => {

@@ -4,11 +4,20 @@ import { PageLayout } from '../components/PageLayout';
 import { Tool } from '../components/tools/Tool';
 import { ToolsSection } from '../components/tools/ToolsSection';
 import { Tools } from '../data/lifeApi';
+import { GetStaticProps } from 'next';
+import Error from 'next/error';
+import { useEffect, useState } from 'react';
 
 const seoTitle = 'Uses';
 const seoDescription = 'Software I use, gadgets I love, and other things I recommend.';
 
-export default function Uses() {
+export default function Uses({ show404 }: { show404: boolean }) {
+  // Return 404 page if this page should be hidden
+  if (show404) {
+    return <Error statusCode={404} />;
+  }
+  
+  // Rest of the component remains unchanged
   return (
     <>
       <NextSeo
@@ -42,3 +51,15 @@ export default function Uses() {
     </>
   );
 }
+
+export const getStaticProps: GetStaticProps = async () => {
+  // Check if this page should return 404
+  const pagesToHide = process.env.NEXT_PUBLIC_MAKE_PAGE_404?.split(',') || [];
+  const show404 = pagesToHide.includes('/uses');
+  
+  return {
+    props: {
+      show404,
+    },
+  };
+};

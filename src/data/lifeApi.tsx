@@ -2,24 +2,14 @@ import { ExternalLink } from '../components/ExternalLink';
 import { GitHubIcon } from '../components/icons/GitHubIcon';
 import { InstagramIcon } from '../components/icons/InstagramIcon';
 import { XIcon } from '../components/icons/XIcon';
-import AmbitLogo from '../images/logos/ambit.png';
-import BarepapersLogo from '../images/logos/barepapers.svg';
-import BimLogo from '../images/logos/bim.png';
-import CDGOLogo from '../images/logos/cdgo.png';
-import ClevertechLogo from '../images/logos/clevertech.png';
-import EvercastLogo from '../images/logos/evercast.svg';
-import Howdy from '../images/logos/howdy.png';
-import JarockiMeLogo from '../images/logos/jarocki.svg';
-import JojoMobileLogo from '../images/logos/jojomobile.png';
-import MonitoLogo from '../images/logos/monito.svg';
-import Consultly from '../images/logos/consultly.svg';
-import MobileVikingsLogo from '../images/logos/mv.png';
-import NSNLogo from '../images/logos/nsn.svg';
-import ParabolLogo from '../images/logos/parabol.svg';
-import TastyCloudLogo from '../images/logos/tastycloud.png';
-import YearProgressLogo from '../images/logos/yearprogress.svg';
-import Minimal from '../images/logos/minimal.svg';
 import { LinkedInIcon } from '../components/icons/LinkedInIcon';
+import anish3dLogoA from '../images/logos/anish3d_A.webp';
+import arsenalLogo from '../images/logos/ArsenalTech.svg';
+import encoderLogo from '../images/logos/EncoderLab.svg';
+import fergusLogo from '../images/logos/Fergus.svg';
+import intransureLogo from '../images/logos/INTRA.svg';
+import mdLogo from '../images/logos/MD.svg';
+import tenerityLogo from '../images/logos/Tenerity.svg';
 
 export const Name = process.env.NEXT_PUBLIC_FULL_NAME;
 
@@ -32,6 +22,11 @@ export const About = (
 export const AboutExtended = (
   <>
     <div dangerouslySetInnerHTML={{ __html: process.env.NEXT_PUBLIC_ABOUT_PAGE_EXTENDED || '' }} />
+  </>
+);
+export const AboutWork = (
+  <>
+    <div dangerouslySetInnerHTML={{ __html: process.env.NEXT_PUBLIC_ABOUT_PAGE_WORK || '' }} />
   </>
 );
 export type Project = {
@@ -47,63 +42,33 @@ export type Project = {
 
 export const MyCurrentProjects: Project[] = [
   {
-    title: 'Consultly',
-    techStack: ['Side Project', 'TypeScript', 'Next.js', 'WebRTC'],
-    description: 'A platform to build and grow your online business.',
-    logo: Consultly,
+    title: 'One',
+    techStack: ['One', 'One', 'One', 'One'],
+    description: 'One.',
+    logo: anish3dLogoA,
     link: {
-      label: 'consultly.com',
-      href: 'https://consultly.com',
+      label: 'anish3d.com',
+      href: 'https://anish3d.com',
     },
   },
   {
-    title: 'Monito',
-    techStack: ['Side Project', 'TypeScript', 'Next.js', 'Browser Extension'],
-    description: 'Browser extension that records everything happening in a web application.',
-    logo: MonitoLogo,
+    title: 'Two',
+    techStack: ['One', 'One', 'One', 'One'],
+    description: 'One.',
+    logo: anish3dLogoA,
     link: {
-      label: 'monito.dev',
-      href: 'https://monito.dev',
+      label: 'anish3d.com',
+      href: 'https://anish3d.com',
     },
   },
   {
-    title: 'Jarocki.me',
-    techStack: ['Side Project', 'Next.js', 'MDX'],
-    description: 'My personal website you are currently on, built with Next.js.',
-    logo: JarockiMeLogo,
+    title: 'Three',
+    techStack: ['One', 'One', 'One', 'One'],
+    description: 'One.',
+    logo: anish3dLogoA,
     link: {
-      label: 'github.com',
-      href: 'https://github.com/BartoszJarocki/web-jarocki-me',
-    },
-  },
-  {
-    title: 'Minimal',
-    techStack: ['Side Project', 'Next.js', 'Puppeteer'],
-    description: 'Minimalist calendars, habit trackers and planners generator.',
-    logo: Minimal,
-    link: {
-      label: 'useminimal.com',
-      href: 'https://useminimal.com',
-    },
-  },
-  {
-    title: 'Barepapers',
-    techStack: ['Side Project', 'Next.js', 'Puppeteer'],
-    description: 'Generates beautiful wallpapers using random shapes and gradients.',
-    logo: BarepapersLogo,
-    link: {
-      label: 'barepapers.com',
-      href: 'https://barepapers.com',
-    },
-  },
-  {
-    title: 'Year progress',
-    techStack: ['Side Project', 'TypeScript', 'Next.js'],
-    description: 'Tracks current year progress and displays a countdown.',
-    logo: YearProgressLogo,
-    link: {
-      label: 'getyearprogress.com',
-      href: 'https://getyearprogress.com',
+      label: 'anish3d.com',
+      href: 'https://anish3d.com',
     },
   },
 ];
@@ -113,7 +78,7 @@ export const MyPastProjects: Project[] = [
     title: 'Parabol',
     techStack: ['Full Stack Developer', 'TypeScript', 'React', 'Node.js', 'GraphQL'],
     description: 'The Agile meeting co-pilot that delivers better meetings with less effort.',
-    logo: ParabolLogo,
+    logo: anish3dLogoA,
     link: {
       label: 'github.com',
       href: 'https://github.com/ParabolInc/parabol',
@@ -131,7 +96,7 @@ export const MyPastProjects: Project[] = [
     ],
     description:
       'Creative collaboration platform that combines video conferencing and HD media streaming.',
-    logo: EvercastLogo,
+    logo: anish3dLogoA,
     link: {
       label: 'evercast.us',
       href: 'https://www.evercast.us/',
@@ -141,7 +106,7 @@ export const MyPastProjects: Project[] = [
     title: 'Mobile Vikings',
     techStack: ['Lead Android Developer', 'Android', 'Kotlin'],
     description: 'Android application for leading virtual mobile operator in Poland.',
-    logo: MobileVikingsLogo,
+    logo: anish3dLogoA,
     link: {
       label: 'mobilevikings.pl',
       href: 'https://mobilevikings.pl/',
@@ -151,7 +116,7 @@ export const MyPastProjects: Project[] = [
     title: 'Howdy',
     techStack: ['Lead Android Developer', 'Android', 'Kotlin'],
     description: 'Howdy is a place for you to join communities you care about.',
-    logo: Howdy,
+    logo: anish3dLogoA,
     link: {
       label: 'play.google.com',
       href: 'https://play.google.com/store/apps/details?id=com.howdyhub.howdy',
@@ -161,7 +126,7 @@ export const MyPastProjects: Project[] = [
     title: 'Tastycloud',
     techStack: ['Lead Android Developer', 'Android', 'Kotlin'],
     description: 'Android application for managing and displaying restaurant menus in kiosk mode.',
-    logo: TastyCloudLogo,
+    logo: anish3dLogoA,
     link: {
       label: 'tastycloud.fr',
       href: 'https://www.tastycloud.fr/',
@@ -171,19 +136,19 @@ export const MyPastProjects: Project[] = [
     title: 'Ambit',
     techStack: ['Lead Android Developer', 'Android', 'Kotlin'],
     description: 'Android application that helps with sharing your contact details.',
-    logo: AmbitLogo,
+    logo: anish3dLogoA,
   },
   {
     title: 'Bim',
     techStack: ['Lead Android Developer', 'Android', 'Kotlin'],
     description: 'Android application that helps with booking a table in a restaurants.',
-    logo: BimLogo,
+    logo: anish3dLogoA,
   },
   {
     title: 'Canal Digital GO',
     techStack: ['Lead Android Developer', 'Android', 'Kotlin'],
     description: 'Video streaming mobile application for Canal Digital subscribers.',
-    logo: CDGOLogo,
+    logo: anish3dLogoA,
   },
 ];
 
@@ -196,32 +161,46 @@ export const SocialMedia = [
 
 export const Work = [
   {
-    company: 'Parabol',
-    title: 'Full Stack Developer',
-    logo: ParabolLogo,
+    company: 'Tenerity',
+    title: 'Delivery Lead',
+    logo: tenerityLogo,
     start: '2021',
-    end: '2024',
+    end: '-',
   },
   {
-    company: 'Clevertech',
-    title: 'Lead Android Developer → Full Stack Developer',
-    logo: ClevertechLogo,
-    start: '2015',
+    company: 'Multidots',
+    title: 'Team Lead → Project Manager',
+    logo: mdLogo,
+    start: '2018',
     end: '2021',
   },
   {
-    company: 'Jojo Mobile',
-    title: 'Android Developer → Lead Android Developer',
-    logo: JojoMobileLogo,
-    start: '2012',
+    company: 'Intransure',
+    title: 'Software Engineer → Team Lead',
+    logo: intransureLogo,
+    start: '2015',
+    end: '2018',
+  },
+  {
+    company: 'FSTPL',
+    title: 'Software Engineer',
+    logo: fergusLogo,
+    start: '2014',
     end: '2015',
   },
   {
-    company: 'Nokia Siemens Networks',
-    title: 'C/C++ Developer',
-    logo: NSNLogo,
-    start: '2010',
-    end: '2012',
+    company: 'Encoder Lab',
+    title: 'Sr PHP Developer',
+    logo: encoderLogo,
+    start: '2013',
+    end: '2014',
+  },
+  {
+    company: 'ArsenalTech',
+    title: 'PHP Developer',
+    logo: arsenalLogo,
+    start: '2011',
+    end: '2013',
   },
 ] as const;
 
@@ -248,6 +227,65 @@ export const CompaniesLinks = [
   },
 ] as const;
 
+// Define types for Notion data
+export type NotionItem = {
+  name: string;
+  link: string;
+};
+
+export type NotionDataByType = {
+  books_collection: NotionItem[];
+  videos_collection: NotionItem[];
+  podcasts_collection: NotionItem[];
+  people_collection: NotionItem[];
+  blogs_collection: NotionItem[];
+};
+
+// Function to fetch data from Notion
+export async function fetchAboutMeData(): Promise<NotionDataByType> {
+  try {
+    const response = await fetch(`/api/notion`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch data from Notion');
+    }
+    
+    const data = await response.json();
+    
+    // Organize data by link type
+    const organizedData: NotionDataByType = {
+      books_collection: [],
+      videos_collection: [],
+      podcasts_collection: [],
+      people_collection: [],
+      blogs_collection: []
+    };
+    
+    data.forEach((item: any) => {
+      const linkType = item.linkType;
+      const notionItem = {
+        name: item.name,
+        link: item.directLink
+      };
+      
+      if (organizedData[linkType as keyof NotionDataByType]) {
+        organizedData[linkType as keyof NotionDataByType].push(notionItem);
+      }
+    });
+    
+    return organizedData;
+  } catch (error) {
+    console.error('Error fetching Notion data:', error);
+    return {
+      books_collection: [],
+      videos_collection: [],
+      podcasts_collection: [],
+      people_collection: [],
+      blogs_collection: []
+    };
+  }
+}
+
+// Keep the original data as fallbacks
 export const Books = [
   {
     name: 'Shoe Dog: A Memoir by the Creator of Nike by Phil Knight',

@@ -11,9 +11,9 @@ import { ANIMATION_FROM_PROPS, ANIMATION_TO_PROPS } from '../lib/animation';
 const seoTitle = 'Creating';
 const seoDescription = "Things I've made trying to put my dent in the universe.";
 
-export default function Creating({ hidePage }: { hidePage: boolean }) {
-  // Return 404 page if hidePage is true
-  if (hidePage) {
+export default function Creating({ show404 }: { show404: boolean }) {
+  // Return 404 page if this page should be hidden
+  if (show404) {
     return <Error statusCode={404} />;
   }
 
@@ -79,13 +79,13 @@ export default function Creating({ hidePage }: { hidePage: boolean }) {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  // Check if HIDE_PAGE_CREATING is defined and set to TRUE
-  // Note: Environment variables are always strings, so we need to check for 'TRUE' or 'true'
-  const hidePageCreating = process.env.HIDE_PAGE_CREATING?.toUpperCase() === 'TRUE';
+  // Check if this page should return 404
+  const pagesToHide = process.env.NEXT_PUBLIC_MAKE_PAGE_404?.split(',') || [];
+  const show404 = pagesToHide.includes('/creating');
   
   return {
     props: {
-      hidePage: hidePageCreating,
+      show404,
     },
   };
 };

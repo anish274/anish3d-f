@@ -2,7 +2,7 @@ import { EnvelopeIcon } from '@heroicons/react/24/outline';
 import { NextSeo } from 'next-seo';
 import Image from 'next/image';
 import React, { useEffect, useMemo, useState } from 'react';
-
+import { GetStaticProps } from 'next';
 import AvatarImage from '../../public/assets/blog/authors/anish_profile_about.png';
 import { Container } from '../components/Container';
 import { ExternalLink } from '../components/ExternalLink';
@@ -12,24 +12,38 @@ import { Section } from '../components/Section';
 import { SocialLink } from '../components/SocialLink';
 import {
   AboutExtended,
+  AboutWork,
   Blogs,
   Books,
   PeopleWorthFollowingOnTwitter,
   Podcasts,
   Quotes,
   SocialMedia,
-  VideosWorthWatching,
+  VideosWorthWatching
 } from '../data/lifeApi';
+
+import { useAboutMeData } from '../hooks/useAboutMeData';
 
 const seoTitle = `${'About Me - '} ${process.env.NEXT_PUBLIC_FULL_NAME || ''} ${process.env.NEXT_PUBLIC_SITE_DESC || ''}`.trim();
 const seoDescription = process.env.NEXT_PUBLIC_HOME_PAGE_SEO_DESC;
-
 // const seoTitle = `About`;
 // const seoDescription = `A few words about me.`;
 
+export const getStaticProps: GetStaticProps = async () => {
+  // Check if this page should return 404
+  const pagesToHide = process.env.NEXT_PUBLIC_MAKE_PAGE_404?.split(',') || [];
+  const show404 = pagesToHide.includes('/about');
+  
+  return {
+    props: {
+      show404,
+    },
+  };
+};
+
 export default function AboutMe() {
   const randomQuote = useMemo(() => Quotes[Math.floor(Math.random() * Quotes.length)], []);
-
+  const { notionData, loading, error } = useAboutMeData();
   return (
     <>
       <NextSeo
@@ -74,53 +88,21 @@ export default function AboutMe() {
             <Section>
               <Section.Title as="h2">Work</Section.Title>
               <Section.Content>
-                I&apos;m a software developer with over 13 years of experience. I started as a C/C++
-                developer, then transitioned to Android world and now I&apos;m mostly focused on
-                developing great user experiences using React.
+              {AboutWork}
                 <br />
-                <br />I created multiple Android applications from scratch for companies around the
-                world like{' '}
-                <ExternalLink href={'https://www.visionmedia.com/'}>VisionMedia</ExternalLink>,{' '}
-                <ExternalLink href={'https://www.dkms.org/en'}>DKMS</ExternalLink>,{' '}
-                <ExternalLink href={'https://www.aaa.com/'}>AAA</ExternalLink>,{' '}
-                <ExternalLink href={'https://polskapress.pl/pl'}>PolskaPress</ExternalLink> or{' '}
-                <ExternalLink href={'https://www.canaldigital.no/'}>Canal Digital</ExternalLink>. I
-                helped to create/review/design mobile applications for startups like{' '}
-                <ExternalLink href={'https://play.google.com/store/apps/details?id=io.bimapp'}>
-                  Bim
-                </ExternalLink>
-                , <ExternalLink href={'https://www.tastycloud.fr'}>Tastycloud</ExternalLink>,{' '}
-                <ExternalLink
-                  href={'https://play.google.com/store/apps/details?id=com.howdyhub.howdy'}
-                >
-                  Howdy
-                </ExternalLink>{' '}
-                and{' '}
-                <ExternalLink
-                  href={
-                    'https://play.google.com/store/apps/details?id=com.vikingco.vikingapp.poland'
-                  }
-                >
-                  Mobile Vikings
-                </ExternalLink>
-                . I developed a WebRTC powered video conferencing frontend application using
-                React.js/GraphQL/Typescript for{' '}
-                <ExternalLink href={'https://www.evercast.us'}>Evercast</ExternalLink>. I also had
-                led development teams many times. If you&apos;d like to work with me{' '}
-                <ExternalLink href="https://twitter.com/messages/compose?recipient_id=512460212">
-                  DM me on Twitter
-                </ExternalLink>{' '}
-                or just{' '}
-                <ExternalLink href="mailto:bartosz.jarocki@icloud.com">email me.</ExternalLink>
+                <br />
+                <ExternalLink href="mailto:anish@outlook.in">email me.</ExternalLink>
               </Section.Content>
             </Section>
             <Section>
               <Section.Title as="h2">Books worth re-reading</Section.Title>
               <Section.Content>
                 <ul className="mt-1 list-disc list-inside">
-                  {Books.map((book) => (
-                    <li key={book.name}>
-                      <ExternalLink href={book.link}>{book.name}</ExternalLink>
+                   {notionData.books_collection.map((book, index) => (
+                    <li key={index}>
+                      <a href={book.link} target="_blank" rel="noopener noreferrer">
+                        {book.name}
+                      </a>
                     </li>
                   ))}
                 </ul>
@@ -130,9 +112,11 @@ export default function AboutMe() {
               <Section.Title as="h2">Podcasts I listen to</Section.Title>
               <Section.Content>
                 <ul className="mt-1 list-disc list-inside">
-                  {Podcasts.map((podcast) => (
-                    <li key={podcast.name}>
-                      <ExternalLink href={podcast.link}>{podcast.name}</ExternalLink>
+                  {notionData.podcasts_collection.map((pc, index) => (
+                    <li key={index}>
+                      <a href={pc.link} target="_blank" rel="noopener noreferrer">
+                        {pc.name}
+                      </a>
                     </li>
                   ))}
                 </ul>
@@ -142,9 +126,11 @@ export default function AboutMe() {
               <Section.Title as="h2">Blogs I read</Section.Title>
               <Section.Content>
                 <ul className="mt-1 list-disc list-inside">
-                  {Blogs.map((blog) => (
-                    <li key={blog.name}>
-                      <ExternalLink href={blog.link}>{blog.name}</ExternalLink>
+                  {notionData.blogs_collection.map((blog, index) => (
+                    <li key={index}>
+                      <a href={blog.link} target="_blank" rel="noopener noreferrer">
+                        {blog.name}
+                      </a>
                     </li>
                   ))}
                 </ul>
@@ -154,9 +140,11 @@ export default function AboutMe() {
               <Section.Title as="h2">Videos worth watching</Section.Title>
               <Section.Content>
                 <ul className="mt-1 list-disc list-inside">
-                  {VideosWorthWatching.map((video) => (
-                    <li key={video.name}>
-                      <ExternalLink href={video.link}>{video.name}</ExternalLink>
+                  {notionData.videos_collection.map((vid, index) => (
+                    <li key={index}>
+                      <a href={vid.link} target="_blank" rel="noopener noreferrer">
+                        {vid.name}
+                      </a>
                     </li>
                   ))}
                 </ul>
@@ -165,12 +153,13 @@ export default function AboutMe() {
             <Section>
               <Section.Title as="h2">People with unique perspective I follow</Section.Title>
               <Section.Content>
-                {PeopleWorthFollowingOnTwitter.map<React.ReactNode>((personOnTwitter) => (
-                  <ExternalLink key={personOnTwitter.name} href={personOnTwitter.link}>
-                    {personOnTwitter.name}
-                  </ExternalLink>
-                )).reduce((prev, curr) => [prev, ', ', curr])}
-                .
+                {notionData.people_collection.map((p, index) => (
+                    <li key={index}>
+                      <a href={p.link} target="_blank" rel="noopener noreferrer">
+                        {p.name}
+                      </a>
+                    </li>
+                  ))}
               </Section.Content>
             </Section>
             <Section>
