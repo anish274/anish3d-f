@@ -22,12 +22,7 @@ interface FormStatus {
 }
 
 export default function Contact({ show404 }: { show404: boolean }) {
-  // Return 404 page if this page should be hidden
-  if (show404) {
-    return <Error statusCode={404} />;
-  }
-  
-  // Now useState calls will be at the top level of the component
+  // First, declare all hooks at the top level
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
@@ -41,6 +36,11 @@ export default function Contact({ show404 }: { show404: boolean }) {
   });
   
   const [loading, setLoading] = useState<boolean>(false);
+  
+  // Then handle conditional returns
+  if (show404) {
+    return <Error statusCode={404} />;
+  }
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

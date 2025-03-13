@@ -2,7 +2,7 @@
 
 # Anish Shah - Personal website built using Next.js and Notion as headless CMS (Original by Bartosz Jarocki)
 
-This is my personal website I have forked originally built using
+This is my personal website I have forked and customized as per my needs. Originally built using
 
 - [TypeScript](https://www.typescriptlang.org/)
 - [Next JS](https://nextjs.org/)
@@ -47,6 +47,7 @@ There's a certain data format of Notion database that's needed by application. W
 Here's how the database in Notion should look like:
 
 ![notion](screenshots/notion.png)
+![notion2](screenshots/notion2.png)
 
 After defining environment variables and your Notion database, run the application
 
@@ -68,8 +69,8 @@ Blog post example
 ![blog post OG image](https://anish3d.com/api/og?title=Monito,%20two%20weeks%20after%20launch&description=No%20audience,%20just%20Product%20Hunt%20and%20Hacker%20News%20launch.%20How%20did%20it%20go?)
 
 ## Credits
-
-Design heavily inspired by [Tailwind UI Spotlight template](https://tailwindui.com/templates/spotlight)
+- Original Github Repo was created by [Bartosz Jarocki](https://github.com/BartoszJarocki/jarocki.me)
+- Design heavily inspired by [Tailwind UI Spotlight template](https://tailwindui.com/templates/spotlight)
 
 ## Deploy to Vercel
 
