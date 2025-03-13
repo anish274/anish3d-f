@@ -15,10 +15,11 @@ This is my personal website I have forked originally built using
 ## ✨ Additional Implementation ✨ 
 
 - [Vercel Speed Insights](https://vercel.com/docs/speed-insights/package)
-- Different articles for local environments and Production Website articles via notion parameter.
 - [Notion Column List and Column Support](https://developers.notion.com/changelog/column-list-and-column-support)
 - [Notion Callout and Quote and Bookmark Type Support](https://developers.notion.com/changelog/callouts-and-quote-blocks-are-now-supported)
 - [Lightbox Image Gallery Support](https://yet-another-react-lightbox.com/)
+- Differentiate articles for local environments and Production Website articles via notion checkbox field.
+- [Web3Forms - Contact Me Page implementation](https://web3forms.com/)
 
 
 ## Running locally

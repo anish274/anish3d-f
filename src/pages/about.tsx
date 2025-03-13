@@ -90,8 +90,7 @@ export default function AboutMe() {
               <Section.Content>
               {AboutWork}
                 <br />
-                <br />
-                <ExternalLink href="mailto:anish@outlook.in">email me.</ExternalLink>
+                <ExternalLink href="contact">Contact me.</ExternalLink>
               </Section.Content>
             </Section>
             <Section>
