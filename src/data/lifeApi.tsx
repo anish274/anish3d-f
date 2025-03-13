@@ -165,7 +165,7 @@ export const Work = [
     title: 'Delivery Lead',
     logo: tenerityLogo,
     start: '2021',
-    end: '-',
+    end: 'Working',
   },
   {
     company: 'Multidots',

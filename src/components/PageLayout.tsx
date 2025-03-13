@@ -16,7 +16,7 @@ export const PageLayout = ({ title, intro, children, ...rest }: React.PropsWithC
         </h1>
         <p className="mt-6 text-base text-balance">{intro}</p>
       </header>
-      <div className="mt-16 sm:mt-20">{children}</div>
+      <div className="mt-8 sm:mt-10">{children}</div>
     </Container>
   );
 };
