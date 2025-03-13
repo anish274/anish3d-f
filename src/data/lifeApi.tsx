@@ -42,9 +42,9 @@ export type Project = {
 
 export const MyCurrentProjects: Project[] = [
   {
-    title: 'One',
-    techStack: ['One', 'One', 'One', 'One'],
-    description: 'One.',
+    title: 'My Personal AI',
+    techStack: ['AI', 'Groak'],
+    description: 'Ask Queries .',
     logo: anish3dLogoA,
     link: {
       label: 'anish3d.com',
