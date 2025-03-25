@@ -46,6 +46,11 @@ export const NavigationItems = [
     href: '/contact',
     type: 'internal',
   },
+  {
+    name: 'AI',
+    href: '/anish-ai',
+    type: 'internal',
+  }
 ] as const;
 
 export const NavLink = ({ href, children }: React.PropsWithChildren<{ href: string }>) => {

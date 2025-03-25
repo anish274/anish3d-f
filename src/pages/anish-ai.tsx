@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { NextSeo } from 'next-seo';
 import { GetStaticProps } from 'next';
-import Error from 'next/error';
+import { default as NextError } from 'next/error'; // Rename the import to avoid conflict
 import { useState, useRef, useEffect } from 'react';
 
 import { PageLayout } from '../components/PageLayout';
@@ -13,11 +13,6 @@ const seoTitle = 'Anish AI';
 const seoDescription = "Ask anything about me using AI-powered document understanding.";
 
 export default function Creating({ show404 }: { show404: boolean }) {
-  // Return 404 page if this page should be hidden
-  if (show404) {
-    return <Error statusCode={404} />;
-  }
-
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -27,6 +22,11 @@ export default function Creating({ show404 }: { show404: boolean }) {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Return 404 page if this page should be hidden
+  if (show404) {
+    return <NextError statusCode={404} />;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +40,7 @@ export default function Creating({ show404 }: { show404: boolean }) {
 
     try {
       // Call Mistral API for document understanding
-      const response = await fetch('/api/mistral-chat', {
+      const response = await fetch('/api/ai-chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,6 +51,7 @@ export default function Creating({ show404 }: { show404: boolean }) {
       });
 
       if (!response.ok) {
+        // Now we can use the standard Error class without conflict
         throw new Error('Failed to get response from AI');
       }
 
@@ -60,9 +61,12 @@ export default function Creating({ show404 }: { show404: boolean }) {
       setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
     } catch (error) {
       console.error('Error:', error);
+      // Fix the syntax error and add better error handling for rate limits
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        content: 'Sorry, I encountered an error processing your request. Please try again.' 
+        content: (error as Error).toString().includes('rate limit')
+          ? 'Sorry, the AI service is currently experiencing high demand. Please try again in a moment.' 
+          : 'Sorry, I encountered an error processing your request. Please try again.' 
       }]);
     } finally {
       setIsLoading(false);
@@ -85,9 +89,11 @@ export default function Creating({ show404 }: { show404: boolean }) {
       />
       <PageLayout
         title="Anish - AI"
-        intro="A simple tool with AI integration. Ask anything about me, powered by document understanding."
+        intro="A simple tool with AI integration. Ask anything about me, powered by document understanding using AI.
+        - Generate embeddings. - Store embeddings using  VectorStore
+        - Query via LangChain’s retrieval chains."
       >
-        <div className="max-w-3xl mx-auto w-full">
+        <div className="mx-auto max-w-2xl lg:max-w-5xl">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-4">
             <div className="h-[400px] overflow-y-auto mb-4 p-2">
               {messages.length === 0 ? (
