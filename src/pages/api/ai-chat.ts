@@ -37,8 +37,9 @@ export default async function handler(
     }));
 
     // Get PDF content and create a retrieval system
-    //const pdfPath = path.join(process.cwd(), 'public', 'assets', 'documents', 'AnishShah227.pdf');
-    const pdfPath = './public/assets/documents/AnishShah227.pdf';
+    const pdfPath = path.join(process.cwd(), 'public', 'assets', 'documents', 'AnishShah227.pdf');
+    //const pdfPath = path.join(process.cwd(), 'src', 'data', 'documents', pdfFile);
+    //const pdfPath = './public/assets/documents/AnishShah227.pdf';
     // Load the PDF document
     const loader = new PDFLoader(pdfPath);
     const docs = await loader.load();
