@@ -16,7 +16,7 @@ export const Name = process.env.NEXT_PUBLIC_FULL_NAME;
 export const About = (
   <>
     <div dangerouslySetInnerHTML={{ __html: process.env.NEXT_PUBLIC_HOME_PAGE_MY_DETAILS || '' }} />
-    <ExternalLink href="mailto:bartosz@jarocki.me">send me an email.</ExternalLink>
+    <ExternalLink href="contact">connect with me.</ExternalLink>
   </>
 );
 export const AboutExtended = (
@@ -42,9 +42,9 @@ export type Project = {
 
 export const MyCurrentProjects: Project[] = [
   {
-    title: 'One',
-    techStack: ['One', 'One', 'One', 'One'],
-    description: 'One.',
+    title: 'My Personal AI',
+    techStack: ['AI', 'Groak'],
+    description: 'Ask Queries .',
     logo: anish3dLogoA,
     link: {
       label: 'anish3d.com',
