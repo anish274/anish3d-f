@@ -50,6 +50,11 @@ export const NavigationItems = [
     name: 'AI',
     href: '/anish-ai',
     type: 'internal',
+  },
+  {
+    name: 'Develop',
+    href: '/develop',
+    type: 'internal',
   }
 ] as const;
 
