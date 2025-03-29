@@ -38,14 +38,14 @@ const config = {
     return {
       beforeFiles: [
         {
-          source: '/:path*',
+          source: '/',
           has: [
             {
               type: 'host',
               value: 'develop.anish3d.com',
             },
           ],
-          destination: '/develop/:path*',
+          destination: '/develop',
         },
         {
           source: '/_next/:path*',

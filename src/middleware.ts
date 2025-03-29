@@ -34,13 +34,20 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(mainUrl);
     }
     
-    // For regular paths, rewrite to /develop path internally if needed
-    if (!pathname.startsWith('/develop') && pathname !== '/') {
-      url.pathname = `/develop${pathname}`;
-      return NextResponse.rewrite(url);
+    // For the root path on develop subdomain, pass through (it will be handled by next.config.js rewrites)
+    if (pathname === '/') {
+      return NextResponse.next();
     }
     
-    // For root path or paths already starting with /develop, just pass through
+    // For any non-root path on the subdomain, we need to make sure it routes to /develop/[path]
+    if (!pathname.startsWith('/develop')) {
+      // Internal rewrite for dynamic routes
+      const newUrl = request.nextUrl.clone();
+      newUrl.pathname = `/develop${pathname}`;
+      return NextResponse.rewrite(newUrl);
+    }
+    
+    // If the path already starts with /develop, just pass through
     return NextResponse.next();
   } 
   
