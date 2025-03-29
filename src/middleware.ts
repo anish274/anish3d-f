@@ -10,8 +10,25 @@ export function middleware(request: NextRequest) {
   
   // Handle redirection for develop subdomain
   if (isDevelopSubdomain) {
-    // If we're on develop.anish3d.com/[slug], no need to change the URL
-    // The middleware will pass the request through
+    // Check if we're requesting a static asset that should come from the main domain
+    if (
+      pathname.startsWith('/favicon') || 
+      pathname.startsWith('/assets') ||
+      pathname.startsWith('/_next/static')
+    ) {
+      // Allow these to pass through - they'll be handled by the main domain
+      return NextResponse.next();
+    }
+    
+    // Handle other paths on the develop subdomain
+    const url = request.nextUrl.clone();
+    // Rewrite the internal path to include /develop
+    if (!pathname.startsWith('/develop') && pathname !== '/') {
+      url.pathname = `/develop${pathname}`;
+      return NextResponse.rewrite(url);
+    }
+    
+    // If it's the root path or already has /develop, just pass through
     return NextResponse.next();
   } 
   
@@ -40,5 +57,6 @@ export const config = {
   matcher: [
     '/develop',
     '/develop/:path*',
+    '/((?!api|_next/static|_next/image|favicon.ico|assets).*)',
   ],
 };

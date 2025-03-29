@@ -15,6 +15,10 @@ const generateImage = async (req: NextRequest) => {
   const { searchParams } = req.nextUrl;
   const title = searchParams.get('title');
   const description = searchParams.get('description');
+  
+  // Get base URL for assets
+  const baseUrl = process.env.NEXT_PUBLIC_URL || 'https://anish3d.com';
+  const avatarUrl = `${baseUrl}/assets/blog/authors/anish_profile.png`;
 
   return new ImageResponse(
     (
@@ -28,7 +32,7 @@ const generateImage = async (req: NextRequest) => {
             </div>
             <img
               tw="rounded-lg w-32 h-32 self-end ml-auto"
-              src="https://anish3d.com/assets/blog/authors/anish_profile.png"
+              src={avatarUrl}
               alt="Avatar"
             />
           </div>

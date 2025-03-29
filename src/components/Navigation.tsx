@@ -2,7 +2,7 @@ import { Popover, Transition } from '@headlessui/react';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Fragment } from 'react';
+import { Fragment, useMemo } from 'react';
 
 import { ChevronDownIcon } from './icons/ChevronDownIcon';
 import { CloseIcon } from './icons/CloseIcon';
@@ -15,6 +15,7 @@ export const NavigationItems = [
     name: 'Home',
     href: '/',
     type: 'internal',
+    mainSite: true, // This item should always link to main site
   },
   {
     name: 'Notes',
@@ -58,51 +59,113 @@ export const NavigationItems = [
   }
 ] as const;
 
+// Helper to determine if we're on the develop subdomain
+export const useIsOnDevelopSubdomain = () => {
+  const isDevelopSubdomain = 
+    typeof window !== 'undefined' ? window.location.host.startsWith('develop.') : false;
+  return isDevelopSubdomain;
+};
+
+// Helper to get the main domain from the current hostname
+export const getMainDomain = () => {
+  if (typeof window === 'undefined') return process.env.NEXT_PUBLIC_URL;
+  
+  const hostname = window.location.host;
+  if (hostname.startsWith('develop.')) {
+    const mainDomain = hostname.split('.').slice(1).join('.');
+    return `https://${mainDomain}`;
+  }
+  return '';
+};
+
 export const NavLink = ({ href, children }: React.PropsWithChildren<{ href: string }>) => {
   // Check if this href is in the NEXT_PUBLIC_MAKE_PAGE_404 list
   const pagesToHide = process.env.NEXT_PUBLIC_MAKE_PAGE_404?.split(',') || [];
+  const isDevelopSubdomain = useIsOnDevelopSubdomain();
+  const mainDomain = getMainDomain();
+  
+  // For Home link on develop subdomain, link to main domain
+  const finalHref = href === '/' && isDevelopSubdomain 
+    ? mainDomain 
+    : href;
   
   if (pagesToHide.includes(href)) {
     console.log(pagesToHide);
   } else {
     return (
-      <Link href={href} className="transition hover:text-primary">
+      <Link href={finalHref} className="transition hover:text-primary">
         {children}
       </Link>
     );
   }
-
 };
 
 const NavItem = ({ href, children }: React.PropsWithChildren<{ href: string }>) => {
-  const isActive = useRouter().pathname === href;
-// Check if this href is in the NEXT_PUBLIC_MAKE_PAGE_404 list
-const pagesToHide = process.env.NEXT_PUBLIC_MAKE_PAGE_404?.split(',') || [];
+  const router = useRouter();
+  const isActive = router.pathname === href;
+  // Check if this href is in the NEXT_PUBLIC_MAKE_PAGE_404 list
+  const pagesToHide = process.env.NEXT_PUBLIC_MAKE_PAGE_404?.split(',') || [];
+  const isDevelopSubdomain = useIsOnDevelopSubdomain();
+  const mainDomain = getMainDomain();
   
-if (pagesToHide.includes(href)) {
-  console.log(pagesToHide);
-} else {
-  return (
-    <li>
-      <Link
-        href={href}
-        className={clsx(
-          'relative block px-3 py-2 transition',
-          isActive ? 'text-primary' : 'hover:text-primary',
+  // For Home link on develop subdomain, link to main domain
+  const finalHref = href === '/' && isDevelopSubdomain 
+    ? mainDomain 
+    : href;
+  
+  if (pagesToHide.includes(href)) {
+    console.log(pagesToHide);
+  } else {
+    return (
+      <li>
+        {href === '/' && isDevelopSubdomain ? (
+          <a
+            href={finalHref}
+            className={clsx(
+              'relative block px-3 py-2 transition',
+              isActive ? 'text-primary' : 'hover:text-primary',
+            )}
+          >
+            {children}
+          </a>
+        ) : (
+          <Link
+            href={finalHref}
+            className={clsx(
+              'relative block px-3 py-2 transition',
+              isActive ? 'text-primary' : 'hover:text-primary',
+            )}
+          >
+            {children}
+          </Link>
         )}
-      >
-        {children}
-      </Link>
-    </li>
-  );
-}
-  
+      </li>
+    );
+  }
 };
 
 export const MobileNavItem = ({ href, children }: React.PropsWithChildren<{ href: string }>) => {
+  const isDevelopSubdomain = useIsOnDevelopSubdomain();
+  const mainDomain = getMainDomain();
+  
+  // For Home link on develop subdomain, link to main domain
+  const finalHref = href === '/' && isDevelopSubdomain 
+    ? mainDomain 
+    : href;
+    
+  if (href === '/' && isDevelopSubdomain) {
+    return (
+      <li>
+        <Popover.Button as="button" onClick={() => window.location.href = finalHref} className="block py-2">
+          {children}
+        </Popover.Button>
+      </li>
+    );
+  }
+  
   return (
     <li>
-      <Popover.Button as={Link} href={href} className="block py-2">
+      <Popover.Button as={Link} href={finalHref} className="block py-2">
         {children}
       </Popover.Button>
     </li>
