@@ -20,6 +20,7 @@ const config = {
         hostname: 'prod-files-secure.s3.us-west-2.amazonaws.com',
       },
     ],
+    domains: ['anish3d.com', 'develop.anish3d.com'],
   },
   async redirects() {
     return [
@@ -42,6 +43,26 @@ const config = {
             },
           ],
           destination: '/develop/:path*',
+        },
+        {
+          source: '/assets/:path*',
+          has: [
+            {
+              type: 'host',
+              value: 'develop.anish3d.com',
+            },
+          ],
+          destination: '/assets/:path*',
+        },
+        {
+          source: '/favicon/:path*',
+          has: [
+            {
+              type: 'host',
+              value: 'develop.anish3d.com',
+            },
+          ],
+          destination: '/favicon/:path*',
         },
       ],
     };
