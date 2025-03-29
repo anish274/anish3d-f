@@ -7,10 +7,18 @@ import { Fragment, useMemo } from 'react';
 import { ChevronDownIcon } from './icons/ChevronDownIcon';
 import { CloseIcon } from './icons/CloseIcon';
 
+// Define a type for navigation items
+interface NavigationItem {
+  name: string;
+  href: string;
+  type: 'internal' | 'external';
+  mainSite?: boolean; // Make this optional
+}
+
 // Get the environment variable to determine if Creating page should be hidden
 // const hideCreatingPage = process.env.HIDE_PAGE_CREATING?.toUpperCase() === 'TRUE';
 
-export const NavigationItems = [
+export const NavigationItems: ReadonlyArray<NavigationItem> = [
   {
     name: 'Home',
     href: '/',
@@ -21,16 +29,19 @@ export const NavigationItems = [
     name: 'Notes',
     href: '/notes',
     type: 'internal',
+    mainSite: true, // This should link to main site when on subdomain
   },
   {
     name: 'Creating',
     href: '/creating',
     type: 'internal',
+    mainSite: true, // This should link to main site when on subdomain
   },
   {
     name: 'Uses',
     href: '/uses',
     type: 'internal',
+    mainSite: true, // This should link to main site when on subdomain
   },
   // {
   //   name: 'Resume',
@@ -41,23 +52,27 @@ export const NavigationItems = [
     name: 'About',
     href: '/about',
     type: 'internal',
+    mainSite: true, // This should link to main site when on subdomain
   },
   {
     name: 'Contact',
     href: '/contact',
     type: 'internal',
+    mainSite: true, // This should link to main site when on subdomain
   },
   {
     name: 'AI',
     href: '/anish-ai',
     type: 'internal',
+    mainSite: true, // This should link to main site when on subdomain
   },
   {
     name: 'Develop',
     href: '/develop',
     type: 'internal',
+    mainSite: false, // This should stay on develop subdomain
   }
-] as const;
+];
 
 // Helper to determine if we're on the develop subdomain
 export const useIsOnDevelopSubdomain = () => {
@@ -78,31 +93,48 @@ export const getMainDomain = () => {
   return '';
 };
 
+// Helper to determine if a link should go to the main site
+export const shouldLinkToMainSite = (href: string, item?: NavigationItem) => {
+  // Check if this is a NavigationItem that should always link to main site
+  if (item && item.mainSite === true) return true;
+  
+  // When no item is provided (e.g., for NavLink direct usage), check the href
+  // Home and all main site pages should link to main site when on subdomain
+  return href === '/' || 
+         href === '/notes' || 
+         href === '/creating' || 
+         href === '/uses' || 
+         href === '/about' || 
+         href === '/contact' || 
+         href === '/anish-ai';
+};
+
 export const NavLink = ({ href, children }: React.PropsWithChildren<{ href: string }>) => {
   // Check if this href is in the NEXT_PUBLIC_MAKE_PAGE_404 list
   const pagesToHide = process.env.NEXT_PUBLIC_MAKE_PAGE_404?.split(',') || [];
   const isDevelopSubdomain = useIsOnDevelopSubdomain();
   const mainDomain = getMainDomain();
   
-  // For Home link on develop subdomain, link to main domain
-  const finalHref = (href === '/' && isDevelopSubdomain && mainDomain) 
-    ? mainDomain 
-    : href;
+  // Check if this link should go to the main site
+  const shouldGoToMainSite = isDevelopSubdomain && mainDomain && shouldLinkToMainSite(href);
+  
+  // Create the full URL to the main site if needed
+  const finalHref = shouldGoToMainSite ? `${mainDomain}${href}` : href;
   
   if (pagesToHide.includes(href)) {
     console.log(pagesToHide);
   } else {
-    // If it's the home link on subdomain and we have a main domain, use <a> tag instead of Link
-    if (href === '/' && isDevelopSubdomain && mainDomain) {
+    // If it should link to main site, use <a> tag instead of Link
+    if (shouldGoToMainSite) {
       return (
-        <a href={mainDomain} className="transition hover:text-primary">
+        <a href={finalHref} className="transition hover:text-primary">
           {children}
         </a>
       );
     }
     
     return (
-      <Link href={finalHref} className="transition hover:text-primary">
+      <Link href={href} className="transition hover:text-primary">
         {children}
       </Link>
     );
@@ -117,19 +149,20 @@ const NavItem = ({ href, children }: React.PropsWithChildren<{ href: string }>) 
   const isDevelopSubdomain = useIsOnDevelopSubdomain();
   const mainDomain = getMainDomain();
   
-  // For Home link on develop subdomain, link to main domain
-  const finalHref = (href === '/' && isDevelopSubdomain && mainDomain) 
-    ? mainDomain 
-    : href;
+  // Check if this link should go to the main site
+  const shouldGoToMainSite = isDevelopSubdomain && mainDomain && shouldLinkToMainSite(href);
+  
+  // Create the full URL to the main site if needed
+  const finalHref = shouldGoToMainSite ? `${mainDomain}${href}` : href;
   
   if (pagesToHide.includes(href)) {
     console.log(pagesToHide);
   } else {
     return (
       <li>
-        {href === '/' && isDevelopSubdomain && mainDomain ? (
+        {shouldGoToMainSite ? (
           <a
-            href={mainDomain}
+            href={finalHref}
             className={clsx(
               'relative block px-3 py-2 transition',
               isActive ? 'text-primary' : 'hover:text-primary',
@@ -157,15 +190,16 @@ export const MobileNavItem = ({ href, children }: React.PropsWithChildren<{ href
   const isDevelopSubdomain = useIsOnDevelopSubdomain();
   const mainDomain = getMainDomain();
   
-  // For Home link on develop subdomain, link to main domain
-  const finalHref = (href === '/' && isDevelopSubdomain && mainDomain) 
-    ? mainDomain 
-    : href;
+  // Check if this link should go to the main site
+  const shouldGoToMainSite = isDevelopSubdomain && mainDomain && shouldLinkToMainSite(href);
+  
+  // Create the full URL to the main site if needed
+  const finalHref = shouldGoToMainSite ? `${mainDomain}${href}` : href;
     
-  if (href === '/' && isDevelopSubdomain && mainDomain) {
+  if (shouldGoToMainSite) {
     return (
       <li>
-        <Popover.Button as="button" onClick={() => window.location.href = mainDomain} className="block py-2">
+        <Popover.Button as="button" onClick={() => window.location.href = finalHref} className="block py-2">
           {children}
         </Popover.Button>
       </li>
@@ -184,10 +218,13 @@ export const MobileNavItem = ({ href, children }: React.PropsWithChildren<{ href
 export const DesktopNavigation = (
   props: React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>,
 ) => {
+  const isDevelopSubdomain = useIsOnDevelopSubdomain();
+  const mainDomain = getMainDomain();
+  
   return (
     <nav {...props}>
       <ul className="flex rounded-full bg-white/90 px-3 text-sm font-medium text-zinc-800 shadow-lg shadow-zinc-800/5 ring-1 ring-zinc-900/5 backdrop-blur dark:bg-zinc-800/90 dark:text-zinc-200 dark:ring-white/10">
-        {NavigationItems.map((item) => {
+        {NavigationItems.map((item: NavigationItem) => {
           if (item.type === 'internal') {
             return (
               <NavItem key={item.href} href={item.href}>
@@ -252,7 +289,7 @@ export const MobileNavigation = (props: React.HTMLAttributes<HTMLDivElement>) =>
             </div>
             <nav className="mt-6">
               <ul className="-my-2 divide-y divide-zinc-100 text-base text-zinc-800 dark:divide-zinc-100/5 dark:text-zinc-300">
-                {NavigationItems.map((item) => (
+                {NavigationItems.map((item: NavigationItem) => (
                   <MobileNavItem key={item.href} href={item.href}>
                     {item.name}
                   </MobileNavItem>
