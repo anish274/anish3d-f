@@ -68,7 +68,7 @@ export const useIsOnDevelopSubdomain = () => {
 
 // Helper to get the main domain from the current hostname
 export const getMainDomain = () => {
-  if (typeof window === 'undefined') return process.env.NEXT_PUBLIC_URL;
+  if (typeof window === 'undefined') return process.env.NEXT_PUBLIC_URL || '';
   
   const hostname = window.location.host;
   if (hostname.startsWith('develop.')) {
@@ -85,13 +85,22 @@ export const NavLink = ({ href, children }: React.PropsWithChildren<{ href: stri
   const mainDomain = getMainDomain();
   
   // For Home link on develop subdomain, link to main domain
-  const finalHref = href === '/' && isDevelopSubdomain 
+  const finalHref = (href === '/' && isDevelopSubdomain && mainDomain) 
     ? mainDomain 
     : href;
   
   if (pagesToHide.includes(href)) {
     console.log(pagesToHide);
   } else {
+    // If it's the home link on subdomain and we have a main domain, use <a> tag instead of Link
+    if (href === '/' && isDevelopSubdomain && mainDomain) {
+      return (
+        <a href={mainDomain} className="transition hover:text-primary">
+          {children}
+        </a>
+      );
+    }
+    
     return (
       <Link href={finalHref} className="transition hover:text-primary">
         {children}
@@ -109,7 +118,7 @@ const NavItem = ({ href, children }: React.PropsWithChildren<{ href: string }>) 
   const mainDomain = getMainDomain();
   
   // For Home link on develop subdomain, link to main domain
-  const finalHref = href === '/' && isDevelopSubdomain 
+  const finalHref = (href === '/' && isDevelopSubdomain && mainDomain) 
     ? mainDomain 
     : href;
   
@@ -118,9 +127,9 @@ const NavItem = ({ href, children }: React.PropsWithChildren<{ href: string }>) 
   } else {
     return (
       <li>
-        {href === '/' && isDevelopSubdomain ? (
+        {href === '/' && isDevelopSubdomain && mainDomain ? (
           <a
-            href={finalHref}
+            href={mainDomain}
             className={clsx(
               'relative block px-3 py-2 transition',
               isActive ? 'text-primary' : 'hover:text-primary',
@@ -130,7 +139,7 @@ const NavItem = ({ href, children }: React.PropsWithChildren<{ href: string }>) 
           </a>
         ) : (
           <Link
-            href={finalHref}
+            href={href}
             className={clsx(
               'relative block px-3 py-2 transition',
               isActive ? 'text-primary' : 'hover:text-primary',
@@ -149,14 +158,14 @@ export const MobileNavItem = ({ href, children }: React.PropsWithChildren<{ href
   const mainDomain = getMainDomain();
   
   // For Home link on develop subdomain, link to main domain
-  const finalHref = href === '/' && isDevelopSubdomain 
+  const finalHref = (href === '/' && isDevelopSubdomain && mainDomain) 
     ? mainDomain 
     : href;
     
-  if (href === '/' && isDevelopSubdomain) {
+  if (href === '/' && isDevelopSubdomain && mainDomain) {
     return (
       <li>
-        <Popover.Button as="button" onClick={() => window.location.href = finalHref} className="block py-2">
+        <Popover.Button as="button" onClick={() => window.location.href = mainDomain} className="block py-2">
           {children}
         </Popover.Button>
       </li>
@@ -165,7 +174,7 @@ export const MobileNavItem = ({ href, children }: React.PropsWithChildren<{ href
   
   return (
     <li>
-      <Popover.Button as={Link} href={finalHref} className="block py-2">
+      <Popover.Button as={Link} href={href} className="block py-2">
         {children}
       </Popover.Button>
     </li>
