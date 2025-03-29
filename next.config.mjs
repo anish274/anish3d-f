@@ -5,6 +5,9 @@ const config = {
     scrollRestoration: true,
   },
   transpilePackages: ["geist"],
+  assetPrefix: process.env.NODE_ENV === 'production' ? 
+    process.env.NEXT_PUBLIC_ASSET_PREFIX || undefined : 
+    undefined,
   images: {
     remotePatterns: [
       {
@@ -45,6 +48,16 @@ const config = {
           destination: '/develop/:path*',
         },
         {
+          source: '/_next/:path*',
+          has: [
+            {
+              type: 'host',
+              value: 'develop.anish3d.com',
+            },
+          ],
+          destination: 'https://anish3d.com/_next/:path*',
+        },
+        {
           source: '/assets/:path*',
           has: [
             {
@@ -52,7 +65,7 @@ const config = {
               value: 'develop.anish3d.com',
             },
           ],
-          destination: '/assets/:path*',
+          destination: 'https://anish3d.com/assets/:path*',
         },
         {
           source: '/favicon/:path*',
@@ -62,7 +75,7 @@ const config = {
               value: 'develop.anish3d.com',
             },
           ],
-          destination: '/favicon/:path*',
+          destination: 'https://anish3d.com/favicon/:path*',
         },
       ],
     };

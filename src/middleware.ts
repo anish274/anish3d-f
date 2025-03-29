@@ -8,27 +8,39 @@ export function middleware(request: NextRequest) {
   // Check if we're on the develop subdomain
   const isDevelopSubdomain = hostname.startsWith('develop.');
   
-  // Handle redirection for develop subdomain
+  // Handle static assets on the develop subdomain
   if (isDevelopSubdomain) {
-    // Check if we're requesting a static asset that should come from the main domain
+    // For static assets, redirect to main domain
     if (
-      pathname.startsWith('/favicon') || 
-      pathname.startsWith('/assets') ||
-      pathname.startsWith('/_next/static')
+      pathname.startsWith('/_next/') || 
+      pathname.startsWith('/assets/') || 
+      pathname.startsWith('/favicon/') ||
+      pathname.endsWith('.js') ||
+      pathname.endsWith('.css') ||
+      pathname.endsWith('.ico') ||
+      pathname.endsWith('.svg') ||
+      pathname.endsWith('.png') ||
+      pathname.endsWith('.jpg') ||
+      pathname.endsWith('.jpeg') ||
+      pathname.endsWith('.gif')
     ) {
-      // Allow these to pass through - they'll be handled by the main domain
-      return NextResponse.next();
+      // Get the domain without subdomain (e.g., anish3d.com)
+      const mainDomain = hostname.split('.').slice(1).join('.');
+      // Create the main domain URL
+      const mainUrl = new URL(pathname, `https://${mainDomain}`);
+      mainUrl.search = search;
+      mainUrl.hash = hash;
+      
+      return NextResponse.redirect(mainUrl);
     }
     
-    // Handle other paths on the develop subdomain
-    const url = request.nextUrl.clone();
-    // Rewrite the internal path to include /develop
+    // For regular paths, rewrite to /develop path internally if needed
     if (!pathname.startsWith('/develop') && pathname !== '/') {
       url.pathname = `/develop${pathname}`;
       return NextResponse.rewrite(url);
     }
     
-    // If it's the root path or already has /develop, just pass through
+    // For root path or paths already starting with /develop, just pass through
     return NextResponse.next();
   } 
   
@@ -57,6 +69,9 @@ export const config = {
   matcher: [
     '/develop',
     '/develop/:path*',
+    '/_next/:path*',
+    '/assets/:path*',
+    '/favicon/:path*',
     '/((?!api|_next/static|_next/image|favicon.ico|assets).*)',
   ],
 };
