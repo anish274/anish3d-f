@@ -93,40 +93,47 @@ export const getMainDomain = () => {
   return '';
 };
 
-// Helper to determine if a link should go to the main site
-export const shouldLinkToMainSite = (href: string, item?: NavigationItem) => {
-  // If we're not on the develop subdomain, don't redirect
-  if (!useIsOnDevelopSubdomain()) return false;
-  
-  // If we have a specific item and it's marked as mainSite: false, don't redirect
-  if (item && item.mainSite === false) return false;
-  
-  // If we have a specific item and it's marked as mainSite: true, do redirect
-  if (item && item.mainSite === true) return true;
-  
-  // For direct href checks (when no item is provided), check against known main site paths
-  const mainSitePaths = [
-    '/',
-    '/notes',
-    '/creating',
-    '/uses',
-    '/about',
-    '/contact',
-    '/anish-ai'
-  ];
-  
-  return mainSitePaths.includes(href);
-};
-
-export const NavLink = ({ href, children }: React.PropsWithChildren<{ href: string }>) => {
+// Custom hook to handle navigation logic
+export const useNavigation = (href: string, item?: NavigationItem) => {
   const isDevelopSubdomain = useIsOnDevelopSubdomain();
   const mainDomain = getMainDomain();
   
   // Check if this link should go to the main site
-  const shouldGoToMainSite = shouldLinkToMainSite(href);
+  const shouldGoToMainSite = (() => {
+    // If we're not on the develop subdomain, don't redirect
+    if (!isDevelopSubdomain) return false;
+    
+    // If we have a specific item and it's marked as mainSite: false, don't redirect
+    if (item && item.mainSite === false) return false;
+    
+    // If we have a specific item and it's marked as mainSite: true, do redirect
+    if (item && item.mainSite === true) return true;
+    
+    // For direct href checks (when no item is provided), check against known main site paths
+    const mainSitePaths = [
+      '/',
+      '/notes',
+      '/creating',
+      '/uses',
+      '/about',
+      '/contact',
+      '/anish-ai'
+    ];
+    
+    return mainSitePaths.includes(href);
+  })();
   
   // Create the full URL to the main site if needed
   const finalHref = shouldGoToMainSite ? `${mainDomain}${href}` : href;
+  
+  return {
+    shouldGoToMainSite,
+    finalHref
+  };
+};
+
+export const NavLink = ({ href, children }: React.PropsWithChildren<{ href: string }>) => {
+  const { shouldGoToMainSite, finalHref } = useNavigation(href);
   
   // If it should link to main site, use <a> tag instead of Link
   if (shouldGoToMainSite) {
@@ -147,14 +154,7 @@ export const NavLink = ({ href, children }: React.PropsWithChildren<{ href: stri
 const NavItem = ({ href, children }: React.PropsWithChildren<{ href: string }>) => {
   const router = useRouter();
   const isActive = router.pathname === href;
-  const isDevelopSubdomain = useIsOnDevelopSubdomain();
-  const mainDomain = getMainDomain();
-  
-  // Check if this link should go to the main site
-  const shouldGoToMainSite = shouldLinkToMainSite(href);
-  
-  // Create the full URL to the main site if needed
-  const finalHref = shouldGoToMainSite ? `${mainDomain}${href}` : href;
+  const { shouldGoToMainSite, finalHref } = useNavigation(href);
   
   return (
     <li>
@@ -184,14 +184,7 @@ const NavItem = ({ href, children }: React.PropsWithChildren<{ href: string }>) 
 };
 
 export const MobileNavItem = ({ href, children }: React.PropsWithChildren<{ href: string }>) => {
-  const isDevelopSubdomain = useIsOnDevelopSubdomain();
-  const mainDomain = getMainDomain();
-  
-  // Check if this link should go to the main site
-  const shouldGoToMainSite = shouldLinkToMainSite(href);
-  
-  // Create the full URL to the main site if needed
-  const finalHref = shouldGoToMainSite ? `${mainDomain}${href}` : href;
+  const { shouldGoToMainSite, finalHref } = useNavigation(href);
     
   if (shouldGoToMainSite) {
     return (
