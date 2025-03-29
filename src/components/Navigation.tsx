@@ -7,10 +7,18 @@ import { Fragment, useMemo } from 'react';
 import { ChevronDownIcon } from './icons/ChevronDownIcon';
 import { CloseIcon } from './icons/CloseIcon';
 
+// Define a type for navigation items
+interface NavigationItem {
+  name: string;
+  href: string;
+  type: 'internal' | 'external';
+  mainSite?: boolean; // Make this optional
+}
+
 // Get the environment variable to determine if Creating page should be hidden
 // const hideCreatingPage = process.env.HIDE_PAGE_CREATING?.toUpperCase() === 'TRUE';
 
-export const NavigationItems = [
+export const NavigationItems: ReadonlyArray<NavigationItem> = [
   {
     name: 'Home',
     href: '/',
@@ -62,8 +70,9 @@ export const NavigationItems = [
     name: 'Develop',
     href: '/develop',
     type: 'internal',
+    mainSite: false, // This should stay on develop subdomain
   }
-] as const;
+];
 
 // Helper to determine if we're on the develop subdomain
 export const useIsOnDevelopSubdomain = () => {
@@ -85,9 +94,9 @@ export const getMainDomain = () => {
 };
 
 // Helper to determine if a link should go to the main site
-export const shouldLinkToMainSite = (href: string, item?: typeof NavigationItems[number]) => {
+export const shouldLinkToMainSite = (href: string, item?: NavigationItem) => {
   // Check if this is a NavigationItem that should always link to main site
-  if (item && item.mainSite) return true;
+  if (item && item.mainSite === true) return true;
   
   // When no item is provided (e.g., for NavLink direct usage), check the href
   // Home and all main site pages should link to main site when on subdomain
@@ -215,7 +224,7 @@ export const DesktopNavigation = (
   return (
     <nav {...props}>
       <ul className="flex rounded-full bg-white/90 px-3 text-sm font-medium text-zinc-800 shadow-lg shadow-zinc-800/5 ring-1 ring-zinc-900/5 backdrop-blur dark:bg-zinc-800/90 dark:text-zinc-200 dark:ring-white/10">
-        {NavigationItems.map((item) => {
+        {NavigationItems.map((item: NavigationItem) => {
           if (item.type === 'internal') {
             return (
               <NavItem key={item.href} href={item.href}>
@@ -280,7 +289,7 @@ export const MobileNavigation = (props: React.HTMLAttributes<HTMLDivElement>) =>
             </div>
             <nav className="mt-6">
               <ul className="-my-2 divide-y divide-zinc-100 text-base text-zinc-800 dark:divide-zinc-100/5 dark:text-zinc-300">
-                {NavigationItems.map((item) => (
+                {NavigationItems.map((item: NavigationItem) => (
                   <MobileNavItem key={item.href} href={item.href}>
                     {item.name}
                   </MobileNavItem>
