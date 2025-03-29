@@ -30,6 +30,22 @@ const config = {
       },
     ];
   },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: '/:path*',
+          has: [
+            {
+              type: 'host',
+              value: 'develop.anish3d.com',
+            },
+          ],
+          destination: '/develop/:path*',
+        },
+      ],
+    };
+  },
 };
 
 export default config;
