@@ -16,12 +16,27 @@ interface Props {
 }
 
 export default function Notes({ notes, tags }: Props) {
+  // Function to determine the canonical URL based on host
+  const getCanonicalUrl = () => {
+    // Default to main domain path
+    let canonical = `${process.env.NEXT_PUBLIC_URL}/develop`;
+    
+    // When rendered on the client, check if we're on the subdomain
+    if (typeof window !== 'undefined') {
+      if (window.location.host.startsWith('develop.')) {
+        canonical = `https://${window.location.host}`;
+      }
+    }
+    
+    return canonical;
+  };
+
   return (
     <>
       <NextSeo
         title={seoTitle}
         description={seoDescription}
-        canonical={`${process.env.NEXT_PUBLIC_URL}/notes`}
+        canonical={getCanonicalUrl()}
         openGraph={{
           images: [{ url: `${process.env.NEXT_PUBLIC_URL}/api/og?title=${seoTitle}` }],
         }}

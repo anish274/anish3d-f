@@ -21,8 +21,25 @@ export default function Note({
   noteContent,
   previousPathname,
 }: Props & { previousPathname: string }) {
-  const url = `${process.env.NEXT_PUBLIC_URL}/notes/${slug}`;
-  const openGraphImageUrl = `${process.env.NEXT_PUBLIC_URL}/api/og?title=${title}&description=${description}`;
+  // Function to determine the canonical URL based on host
+  const getCanonicalUrl = () => {
+    // Default to main domain path
+    let canonical = `${process.env.NEXT_PUBLIC_URL}/develop/${slug}`;
+    
+    // When rendered on the client, check if we're on the subdomain
+    if (typeof window !== 'undefined') {
+      if (window.location.host.startsWith('develop.')) {
+        canonical = `https://${window.location.host}/${slug}`;
+      }
+    }
+    
+    return canonical;
+  };
+
+  const getOgImageUrl = () => {
+    return `${process.env.NEXT_PUBLIC_URL}/api/og?title=${title}&description=${description}`;
+  };
+
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [images, setImages] = useState<Array<{ src: string; alt?: string }>>([]);
@@ -79,14 +96,14 @@ export default function Note({
       <NextSeo
         title={title}
         description={description}
-        canonical={url}
+        canonical={getCanonicalUrl()}
         openGraph={{
-          images: [{ url: openGraphImageUrl }],
+          images: [{ url: getOgImageUrl() }],
         }}
       />
       <ArticleJsonLd
-        url={url}
-        images={[openGraphImageUrl]}
+        url={getCanonicalUrl()}
+        images={[getOgImageUrl()]}
         title={title}
         datePublished={createdAt}
         authorName="Anish Shah"
@@ -105,7 +122,7 @@ export default function Note({
 
           <a
             className="group block text-xl font-semibold md:text-3xl no-underline"
-            href={`http://x.com/share?text=${title}&url=${url}`}
+            href={`http://x.com/share?text=${title}&url=${getCanonicalUrl()}`}
           >
             <h4 className="max-w-lg flex cursor-pointer flex-col duration-200 ease-in-out group-hover:text-primary group-hover:fill-primary fill-white text-wrap">
               <XIcon className="my-6 h-10 w-10 transform transition-transform group-hover:-rotate-12 text-black dark:text-white group-hover:text-primary" />
