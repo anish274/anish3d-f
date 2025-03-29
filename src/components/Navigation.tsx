@@ -95,95 +95,92 @@ export const getMainDomain = () => {
 
 // Helper to determine if a link should go to the main site
 export const shouldLinkToMainSite = (href: string, item?: NavigationItem) => {
-  // Check if this is a NavigationItem that should always link to main site
+  // If we're not on the develop subdomain, don't redirect
+  if (!useIsOnDevelopSubdomain()) return false;
+  
+  // If we have a specific item and it's marked as mainSite: false, don't redirect
+  if (item && item.mainSite === false) return false;
+  
+  // If we have a specific item and it's marked as mainSite: true, do redirect
   if (item && item.mainSite === true) return true;
   
-  // When no item is provided (e.g., for NavLink direct usage), check the href
-  // Home and all main site pages should link to main site when on subdomain
-  return href === '/' || 
-         href === '/notes' || 
-         href === '/creating' || 
-         href === '/uses' || 
-         href === '/about' || 
-         href === '/contact' || 
-         href === '/anish-ai';
+  // For direct href checks (when no item is provided), check against known main site paths
+  const mainSitePaths = [
+    '/',
+    '/notes',
+    '/creating',
+    '/uses',
+    '/about',
+    '/contact',
+    '/anish-ai'
+  ];
+  
+  return mainSitePaths.includes(href);
 };
 
 export const NavLink = ({ href, children }: React.PropsWithChildren<{ href: string }>) => {
-  // Check if this href is in the NEXT_PUBLIC_MAKE_PAGE_404 list
-  const pagesToHide = process.env.NEXT_PUBLIC_MAKE_PAGE_404?.split(',') || [];
   const isDevelopSubdomain = useIsOnDevelopSubdomain();
   const mainDomain = getMainDomain();
   
   // Check if this link should go to the main site
-  const shouldGoToMainSite = isDevelopSubdomain && mainDomain && shouldLinkToMainSite(href);
+  const shouldGoToMainSite = shouldLinkToMainSite(href);
   
   // Create the full URL to the main site if needed
   const finalHref = shouldGoToMainSite ? `${mainDomain}${href}` : href;
   
-  if (pagesToHide.includes(href)) {
-    console.log(pagesToHide);
-  } else {
-    // If it should link to main site, use <a> tag instead of Link
-    if (shouldGoToMainSite) {
-      return (
-        <a href={finalHref} className="transition hover:text-primary">
-          {children}
-        </a>
-      );
-    }
-    
+  // If it should link to main site, use <a> tag instead of Link
+  if (shouldGoToMainSite) {
     return (
-      <Link href={href} className="transition hover:text-primary">
+      <a href={finalHref} className="transition hover:text-primary">
         {children}
-      </Link>
+      </a>
     );
   }
+  
+  return (
+    <Link href={href} className="transition hover:text-primary">
+      {children}
+    </Link>
+  );
 };
 
 const NavItem = ({ href, children }: React.PropsWithChildren<{ href: string }>) => {
   const router = useRouter();
   const isActive = router.pathname === href;
-  // Check if this href is in the NEXT_PUBLIC_MAKE_PAGE_404 list
-  const pagesToHide = process.env.NEXT_PUBLIC_MAKE_PAGE_404?.split(',') || [];
   const isDevelopSubdomain = useIsOnDevelopSubdomain();
   const mainDomain = getMainDomain();
   
   // Check if this link should go to the main site
-  const shouldGoToMainSite = isDevelopSubdomain && mainDomain && shouldLinkToMainSite(href);
+  const shouldGoToMainSite = shouldLinkToMainSite(href);
   
   // Create the full URL to the main site if needed
   const finalHref = shouldGoToMainSite ? `${mainDomain}${href}` : href;
   
-  if (pagesToHide.includes(href)) {
-    console.log(pagesToHide);
-  } else {
-    return (
-      <li>
-        {shouldGoToMainSite ? (
-          <a
-            href={finalHref}
-            className={clsx(
-              'relative block px-3 py-2 transition',
-              isActive ? 'text-primary' : 'hover:text-primary',
-            )}
-          >
-            {children}
-          </a>
-        ) : (
-          <Link
-            href={href}
-            className={clsx(
-              'relative block px-3 py-2 transition',
-              isActive ? 'text-primary' : 'hover:text-primary',
-            )}
-          >
-            {children}
-          </Link>
-        )}
-      </li>
-    );
-  }
+  return (
+    <li>
+      {shouldGoToMainSite ? (
+        <a
+          href={finalHref}
+          className={clsx(
+            'relative block px-3 py-2 transition',
+            isActive ? 'text-primary' : 'hover:text-primary',
+          )}
+        >
+          {children}
+        </a>
+      ) : (
+        <Link
+          href={href}
+          className={clsx(
+            'relative block px-3 py-2 transition',
+            isActive ? 'text-primary' : 'hover:text-primary',
+          )}
+        >
+          {children}
+        </Link>
+      )}
+    </li>
+  );
 };
 
 export const MobileNavItem = ({ href, children }: React.PropsWithChildren<{ href: string }>) => {
@@ -191,7 +188,7 @@ export const MobileNavItem = ({ href, children }: React.PropsWithChildren<{ href
   const mainDomain = getMainDomain();
   
   // Check if this link should go to the main site
-  const shouldGoToMainSite = isDevelopSubdomain && mainDomain && shouldLinkToMainSite(href);
+  const shouldGoToMainSite = shouldLinkToMainSite(href);
   
   // Create the full URL to the main site if needed
   const finalHref = shouldGoToMainSite ? `${mainDomain}${href}` : href;
