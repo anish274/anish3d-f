@@ -9,7 +9,7 @@ import { ProjectCard } from '../components/ProjectCard';
 import { MyCurrentProjects, MyPastProjects } from '../data/lifeApi';
 import { ANIMATION_FROM_PROPS, ANIMATION_TO_PROPS } from '../lib/animation';
 
-const seoTitle = 'Anish AI';
+const seoTitle = 'Anish AI - A simple tool with AI integration';
 const seoDescription = "Ask anything about me using AI-powered document understanding.";
 
 export default function Creating({ show404 }: { show404: boolean }) {
@@ -93,6 +93,7 @@ export default function Creating({ show404 }: { show404: boolean }) {
         - Generate embeddings. - Store embeddings using  VectorStore
         - Query via LangChain’s retrieval chains."
       >
+        
         <div className="mx-auto max-w-2xl lg:max-w-5xl">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-4">
             <div className="h-[400px] overflow-y-auto mb-4 p-2">

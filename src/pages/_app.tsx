@@ -10,6 +10,7 @@ import React, { useEffect, useRef } from 'react';
 
 import { Footer } from '../components/Footer';
 import { Header } from '../components/Header';
+import { GoatCounter } from '../components/GoatCounter';
 import '../styles/index.css';
 import '../styles/prism.css';
 
@@ -51,6 +52,7 @@ export default function App({ Component, pageProps, router }: AppProps) {
           </div>
           <Analytics />
           <SpeedInsights />
+          <GoatCounter />
         </div>
       </ThemeProvider>
     </>

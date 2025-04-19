@@ -27,6 +27,12 @@ export const NavigationItems = [
     type: 'internal',
   },
   {
+    name: 'Develop',
+    href: '/develop',
+    type: 'internal',
+    isSpecial: true,
+  },
+  {
     name: 'Uses',
     href: '/uses',
     type: 'internal',
@@ -58,7 +64,7 @@ export const NavLink = ({ href, children }: React.PropsWithChildren<{ href: stri
   const pagesToHide = process.env.NEXT_PUBLIC_MAKE_PAGE_404?.split(',') || [];
   
   if (pagesToHide.includes(href)) {
-    console.log(pagesToHide);
+    //console.log(pagesToHide);
   } else {
     return (
       <Link href={href} className="transition hover:text-primary">
@@ -71,27 +77,47 @@ export const NavLink = ({ href, children }: React.PropsWithChildren<{ href: stri
 
 const NavItem = ({ href, children }: React.PropsWithChildren<{ href: string }>) => {
   const isActive = useRouter().pathname === href;
-// Check if this href is in the NEXT_PUBLIC_MAKE_PAGE_404 list
-const pagesToHide = process.env.NEXT_PUBLIC_MAKE_PAGE_404?.split(',') || [];
+  const isDevelopPage = href === '/develop';
+  const pagesToHide = process.env.NEXT_PUBLIC_MAKE_PAGE_404?.split(',') || [];
   
-if (pagesToHide.includes(href)) {
-  console.log(pagesToHide);
-} else {
-  return (
-    <li>
-      <Link
-        href={href}
-        className={clsx(
-          'relative block px-3 py-2 transition',
-          isActive ? 'text-primary' : 'hover:text-primary',
-        )}
-      >
-        {children}
-      </Link>
-    </li>
-  );
-}
-  
+  if (pagesToHide.includes(href)) {
+    // console.log(pagesToHide);
+  } else {
+    return (
+      <li>
+        <Link
+          href={href}
+          className={clsx(
+            'relative block px-3 py-2 transition-all duration-300',
+            isActive ? 'text-primary' : 'hover:text-primary',
+            isDevelopPage && 'group',
+            isDevelopPage && isActive && 'scale-105 font-semibold',
+          )}
+        >
+          {children}
+          {isDevelopPage && (
+            <>
+              {/* Subtle background effect */}
+              <span className="absolute inset-0 -z-10 rounded-md bg-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              
+              {/* Animated underline */}
+              <span className="absolute inset-x-1 -bottom-px h-px bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 opacity-0 transition-all duration-300 group-hover:opacity-100" />
+              
+              {/* Pulsing dot for active state */}
+              {isActive && (
+                <span className="absolute -right-1 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-primary animate-ping" />
+              )}
+              
+              {/* Glowing border for active state */}
+              {isActive && (
+                <span className="absolute inset-0 rounded-md ring-1 ring-primary/30 ring-offset-2 ring-offset-white dark:ring-offset-zinc-900 animate-pulse" />
+              )}
+            </>
+          )}
+        </Link>
+      </li>
+    );
+  }
 };
 
 export const MobileNavItem = ({ href, children }: React.PropsWithChildren<{ href: string }>) => {

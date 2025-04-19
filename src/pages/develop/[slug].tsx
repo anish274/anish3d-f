@@ -1,36 +1,34 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { ArticleJsonLd, NextSeo } from 'next-seo';
-import Error from 'next/error';
+import Image from 'next/image';
 import Prism from 'prismjs';
 import { useEffect, useState } from 'react';
 import Lightbox from "yet-another-react-lightbox";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
 
+import { Breadcrumb } from '../../components/Breadcrumb';
 import { XIcon } from '../../components/icons/XIcon';
-import { NoteLayout } from '../../components/notes/NoteLayout';
+import { DevelopLayout } from '../../components/develop/DevelopLayout';
 import { NotionBlockRenderer } from '../../components/notion/NotionBlockRenderer';
-import { Note as NoteType, notesApi } from '../../lib/notesApi';
+import { DevelopNote, developApi } from '../../lib/developApi';
 
 type Props = {
-  note: NoteType;
-  show404: boolean;
+  note: DevelopNote;
   noteContent: any[];
 };
 
 export default function Note({
-  note: { title, description, createdAt, slug },
+  note: { title, description, createdAt, slug, coverImage, tags },
   noteContent,
-  show404,
   previousPathname,
 }: Props & { previousPathname: string }) {
-
-  if (show404) {
-    return <Error statusCode={404} />;
-  }
-
-  const url = `${process.env.NEXT_PUBLIC_URL}/notes/${slug}`;
-  const openGraphImageUrl = `${process.env.NEXT_PUBLIC_URL}/api/og?title=${title}&description=${description}`;
+// Calculate reading time (rough estimate)
+const text = noteContent.map(block => block.plain_text).join(' ');
+const words = text.split(/\s+/).length;
+const readingTime = Math.ceil(words / 50); // words per minute, rounded up
+  const url = `${process.env.NEXT_PUBLIC_URL}/develop/${slug}`;
+  const openGraphImageUrl = coverImage || `${process.env.NEXT_PUBLIC_URL}/api/og?title=${title}&description=${description}`;
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [images, setImages] = useState<Array<{ src: string; alt?: string }>>([]);
@@ -82,6 +80,8 @@ export default function Note({
     };
   }, [noteContent]);
 
+  // breadcrumbItems constant removed as it's no longer passed to DevelopLayout
+
   return (
     <>
       <NextSeo
@@ -100,11 +100,19 @@ export default function Note({
         authorName="Anish Shah"
         description={description}
       />
-      <NoteLayout
-        meta={{ title, description, date: createdAt }}
+      {/* Header and Breadcrumb are now inside DevelopLayout */}
+
+      <DevelopLayout
+        title={title}
+        coverImage={coverImage}
+        publishDate={createdAt} // Pass publish date
+        readingTime={readingTime} // Pass reading time
+        // breadcrumbItems prop removed
         previousPathname={previousPathname}
+        className="max-w-4xl" // ClassName might need adjustment depending on DevelopLayout's internal structure
       >
-        <div className="pb-32">
+
+        <div className="pb-16 w-full">
           {noteContent.map((block) => (
             <NotionBlockRenderer key={block.id} block={block} />
           ))}
@@ -121,7 +129,7 @@ export default function Note({
             </h4>
           </a>
         </div>
-      </NoteLayout>
+      </DevelopLayout>
 
       <Lightbox
         open={lightboxOpen}
@@ -151,10 +159,7 @@ export default function Note({
 
 export const getStaticProps: GetStaticProps<Props, { slug: string }> = async (context) => {
   const slug = context.params?.slug;
-    // Check if this page should return 404
-    const pagesToHide = process.env.NEXT_PUBLIC_MAKE_PAGE_404?.split(',') || [];
-    const show404 = pagesToHide.includes(`/notes`);
-  const allNotes = await notesApi.getNotes();
+  const allNotes = await developApi.getNotes();
   const note = allNotes.find((note) => note.slug === slug);
 
   if (!note) {
@@ -163,20 +168,19 @@ export const getStaticProps: GetStaticProps<Props, { slug: string }> = async (co
     };
   }
 
-  const noteContent = await notesApi.getNote(note.id);
+  const noteContent = await developApi.getNote(note.id);
 
   return {
     props: {
       note,
       noteContent,
-      show404,
     },
     revalidate: 10,
   };
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const posts = await notesApi.getNotes();
+  const posts = await developApi.getNotes();
 
   return {
     paths: posts.map((post) => ({ params: { slug: post.slug } })),

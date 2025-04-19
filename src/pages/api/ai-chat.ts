@@ -37,12 +37,18 @@ export default async function handler(
     }));
 
     // Get PDF content and create a retrieval system
-    const pdfPath = path.join(process.cwd(), 'public', 'assets', 'documents', 'AnishShah227.pdf');
+    const pdfPath = path.join(process.cwd(), 'public', 'assets', 'documents', 'anish_cv_2025_c.pdf');
     //const pdfPath = path.join(process.cwd(), 'src', 'data', 'documents', pdfFile);
     //const pdfPath = './public/assets/documents/AnishShah227.pdf';
     // Load the PDF document
     const loader = new PDFLoader(pdfPath);
-    const docs = await loader.load();
+    let docs;
+    try {
+      docs = await loader.load();
+    } catch (error: any) {
+      console.error('Error loading PDF:', error);
+      return res.status(500).json({ error: 'Failed to load PDF document. Please ensure the PDF is valid.' });
+    }
     
     // Split the document into chunks
     const textSplitter = new RecursiveCharacterTextSplitter({

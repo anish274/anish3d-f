@@ -13,6 +13,7 @@ export type Note = {
   createdAt: string;
   lastEditedAt: string;
   coverImage: string | null;
+  thumbnail?: string;
   tags: string[];
   title: string;
   description: string;

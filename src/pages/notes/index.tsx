@@ -1,5 +1,6 @@
 import { GetStaticProps } from 'next';
 import { NextSeo } from 'next-seo';
+import Error from 'next/error';
 
 import { Badge } from '../../components/Badge';
 import { PageLayout } from '../../components/PageLayout';
@@ -13,9 +14,15 @@ const seoDescription =
 interface Props {
   notes: Note[];
   tags: Array<string>;
+  show404: boolean;
 }
 
-export default function Notes({ notes, tags }: Props) {
+export default function Notes({ notes, tags, show404 }: Props) {
+  // Return 404 page if this page should be hidden
+  if (show404) {
+    return <Error statusCode={404} />;
+  }
+
   return (
     <>
       <NextSeo
@@ -54,11 +61,17 @@ export default function Notes({ notes, tags }: Props) {
 export const getStaticProps: GetStaticProps<Props> = async () => {
   const notes = await notesApi.getNotes('desc');
 
+  // Check if this page should return 404
+  const pagesToHide = process.env.NEXT_PUBLIC_MAKE_PAGE_404?.split(',') || [];
+  const show404 = pagesToHide.includes('/notes');
+
   return {
     props: {
       notes,
       tags: Array.from(new Set(notes.map((post) => post.tags).flat())),
+      show404,
     },
     revalidate: 10,
   };
 };
+
