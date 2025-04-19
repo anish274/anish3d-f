@@ -30,7 +30,7 @@ export default function Note({
   const url = `${process.env.NEXT_PUBLIC_URL}/develop/${slug}`;
   const openGraphImageUrl = coverImage || `${process.env.NEXT_PUBLIC_URL}/api/og?title=${title}&description=${description}`;
 
-  // Move hooks to the top level
+  // Ensure hooks are called at the top level
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [images, setImages] = useState<Array<{ src: string; alt?: string }>>([]);
