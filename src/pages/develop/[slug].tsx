@@ -23,12 +23,14 @@ export default function Note({
   noteContent,
   previousPathname,
 }: Props & { previousPathname: string }) {
-// Calculate reading time (rough estimate)
-const text = noteContent.map(block => block.plain_text).join(' ');
-const words = text.split(/\s+/).length;
-const readingTime = Math.ceil(words / 50); // words per minute, rounded up
+  // Calculate reading time (rough estimate)
+  const text = noteContent.map(block => block.plain_text).join(' ');
+  const words = text.split(/\s+/).length;
+  const readingTime = Math.ceil(words / 50); // words per minute, rounded up
   const url = `${process.env.NEXT_PUBLIC_URL}/develop/${slug}`;
   const openGraphImageUrl = coverImage || `${process.env.NEXT_PUBLIC_URL}/api/og?title=${title}&description=${description}`;
+
+  // Move hooks to the top level
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [images, setImages] = useState<Array<{ src: string; alt?: string }>>([]);
@@ -37,7 +39,6 @@ const readingTime = Math.ceil(words / 50); // words per minute, rounded up
     Prism.highlightAll();
   }, []);
 
-  // Add click handler for images
   useEffect(() => {
     const handleImageClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -45,8 +46,7 @@ const readingTime = Math.ceil(words / 50); // words per minute, rounded up
         e.preventDefault();
         const clickedSrc = (target as HTMLImageElement).src;
         const clickedAlt = (target as HTMLImageElement).alt || 'Image';
-        
-        // Collect all images on the page
+
         const allImages = Array.from(document.querySelectorAll('img:not(.no-popup)'))
           .map((element) => {
             const img = element as HTMLImageElement;
@@ -55,9 +55,8 @@ const readingTime = Math.ceil(words / 50); // words per minute, rounded up
               alt: img.alt || 'Image'
             };
           });
-        
+
         setImages(allImages);
-        // Find the index of the clicked image
         const index = allImages.findIndex(img => img.src === clickedSrc);
         setLightboxIndex(index >= 0 ? index : 0);
         setLightboxOpen(true);
@@ -68,19 +67,16 @@ const readingTime = Math.ceil(words / 50); // words per minute, rounded up
     return () => document.removeEventListener('click', handleImageClick);
   }, []);
 
-  // Add this effect to apply the cursor style to all images
   useEffect(() => {
     const images = document.querySelectorAll('img:not(.no-popup)');
     images.forEach(img => {
       (img as HTMLElement).style.cursor = 'pointer';
     });
-    
+
     return () => {
       // Clean up if needed
     };
   }, [noteContent]);
-
-  // breadcrumbItems constant removed as it's no longer passed to DevelopLayout
 
   return (
     <>
@@ -100,18 +96,15 @@ const readingTime = Math.ceil(words / 50); // words per minute, rounded up
         authorName="Anish Shah"
         description={description}
       />
-      {/* Header and Breadcrumb are now inside DevelopLayout */}
 
       <DevelopLayout
         title={title}
         coverImage={coverImage}
-        publishDate={createdAt} // Pass publish date
-        readingTime={readingTime} // Pass reading time
-        // breadcrumbItems prop removed
+        publishDate={createdAt}
+        readingTime={readingTime}
         previousPathname={previousPathname}
-        className="max-w-4xl" // ClassName might need adjustment depending on DevelopLayout's internal structure
+        className="max-w-4xl"
       >
-
         <div className="pb-16 w-full">
           {noteContent.map((block) => (
             <NotionBlockRenderer key={block.id} block={block} />
