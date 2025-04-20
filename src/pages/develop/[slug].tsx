@@ -152,6 +152,14 @@ export default function Note({
 
 export const getStaticProps: GetStaticProps<Props, { slug: string }> = async (context) => {
   const slug = context.params?.slug;
+
+  // Check if slug is undefined and handle the error
+  if (!slug) {
+    return {
+      notFound: true,
+    };
+  }
+
   const allNotes = await developApi.getNotes();
   const note = allNotes.find((note) => note.slug === slug);
 
