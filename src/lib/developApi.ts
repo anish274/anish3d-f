@@ -266,7 +266,16 @@ class DevelopApi {
               : false,
         };
       })
-      .filter((note) => note.isPublished);
+      // Log the current NODE_ENV before filtering
+      // eslint-disable-next-line no-console
+      .filter((note) => {
+        console.log('NODE_ENV:::', process.env.NODE_ENV);
+        return (
+          note.isPublished &&
+          (!['development', 'production', 'preview'].includes(process.env.NODE_ENV ?? '') || note.isProd)
+        );
+      });
+      // .filter((note) => note.isPublished);
   };
 
   private getPageContent = async (pageId: string) => {
