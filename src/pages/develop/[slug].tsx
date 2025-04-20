@@ -188,3 +188,19 @@ export const getStaticPaths: GetStaticPaths = async () => {
     fallback: 'blocking',
   };
 };
+
+
+// async function getDatabaseContent() {
+//   const response = await developApi.getDatabaseContent();
+
+//   // Ensure response is defined and has the expected structure
+//   if (response && 'files' in response) {
+//     // Proceed with processing files
+//     const files = response.files.map(file => {
+//       // Process each file
+//     });
+//   } else {
+//     console.error("Unexpected response structure:", response);
+//     // Handle the error or return a default value
+//   }
+// }

@@ -94,7 +94,7 @@ class DevelopApi {
   ) {}
 
   async getNotes(sortOrder: 'asc' | 'desc' = 'desc', limit?: number) {
-    const notes = await this.getDatabaseContent(this.databaseId);
+    const notes = await this.getDatabaseContent();
 
     return notes
       .sort((a, b) => {
@@ -104,7 +104,7 @@ class DevelopApi {
   }
 
   async getFeaturedNotes(limit: number = 3) {
-    const notes = await this.getDatabaseContent(this.databaseId);
+    const notes = await this.getDatabaseContent();
     return notes
       .filter(note => note.featured)
       .sort((a, b) => CompareFunctionLookup.desc(new Date(a.publishedAt), new Date(b.publishedAt)))
@@ -135,12 +135,13 @@ class DevelopApi {
     return Array.from(new Set(notes.map((note) => note.category)));
   }
 
-  private getDatabaseContent = async (databaseId: string): Promise<DevelopNote[]> => {
-    const db = await this.notion.databases.query({ database_id: databaseId });
+  // Change from private to public
+  public async getDatabaseContent() {
+    const db = await this.notion.databases.query({ database_id: this.databaseId });
 
     while (db.has_more && db.next_cursor) {
       const { results, has_more, next_cursor } = await this.notion.databases.query({
-        database_id: databaseId,
+        database_id: this.databaseId,
         start_cursor: db.next_cursor,
       });
       db.results = [...db.results, ...results];
@@ -291,4 +292,4 @@ class DevelopApi {
   };
 }
 
-export const developApi = new DevelopApi(notion, process.env.NOTION_DEVELOP_DATABASE_ID!); 
+export const developApi = new DevelopApi(notion, process.env.NOTION_DEVELOP_DATABASE_ID!);
