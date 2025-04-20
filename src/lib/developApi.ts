@@ -183,7 +183,14 @@ class DevelopApi {
             'multi_select' in page.properties.hashtags
               ? page.properties.hashtags.multi_select.map((tag) => tag.name)
               : [],
-          title: 'title' in page.properties.title ? page.properties.title.title[0].plain_text : '',
+          title:
+            page.properties.title &&
+            typeof page.properties.title === 'object' &&
+            'title' in page.properties.title &&
+            Array.isArray(page.properties.title.title) &&
+            page.properties.title.title.length > 0
+              ? page.properties.title.title[0].plain_text
+              : '',
           description:
             'rich_text' in page.properties.description
               ? page.properties.description.rich_text[0].plain_text
