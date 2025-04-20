@@ -180,7 +180,8 @@ class DevelopApi {
           tags:
             page.properties.hashtags &&
             typeof page.properties.hashtags === 'object' &&
-            'multi_select' in page.properties.hashtags
+            'multi_select' in page.properties.hashtags &&
+            Array.isArray(page.properties.hashtags.multi_select)
               ? page.properties.hashtags.multi_select.map((tag) => tag.name)
               : [],
           title:
@@ -188,32 +189,81 @@ class DevelopApi {
             typeof page.properties.title === 'object' &&
             'title' in page.properties.title &&
             Array.isArray(page.properties.title.title) &&
-            page.properties.title.title.length > 0
+            page.properties.title.title.length > 0 &&
+            page.properties.title.title[0] &&
+            'plain_text' in page.properties.title.title[0]
               ? page.properties.title.title[0].plain_text
               : '',
           description:
-            'rich_text' in page.properties.description
+            page.properties.description &&
+            typeof page.properties.description === 'object' &&
+            'rich_text' in page.properties.description &&
+            Array.isArray(page.properties.description.rich_text) &&
+            page.properties.description.rich_text.length > 0 &&
+            page.properties.description.rich_text[0] &&
+            'plain_text' in page.properties.description.rich_text[0]
               ? page.properties.description.rich_text[0].plain_text
               : '',
           slug:
-            'rich_text' in page.properties.slug ? page.properties.slug.rich_text[0].plain_text : '',
+            page.properties.slug &&
+            typeof page.properties.slug === 'object' &&
+            'rich_text' in page.properties.slug &&
+            Array.isArray(page.properties.slug.rich_text) &&
+            page.properties.slug.rich_text.length > 0 &&
+            page.properties.slug.rich_text[0] &&
+            'plain_text' in page.properties.slug.rich_text[0]
+              ? page.properties.slug.rich_text[0].plain_text
+              : '',
           isPublished:
-            'checkbox' in page.properties.published ? page.properties.published.checkbox : false,
+            page.properties.published &&
+            typeof page.properties.published === 'object' &&
+            'checkbox' in page.properties.published
+              ? page.properties.published.checkbox
+              : false,
           publishedAt:
-            'date' in page.properties.publishedAt ? page.properties.publishedAt.date!.start : '',
+            page.properties.publishedAt &&
+            typeof page.properties.publishedAt === 'object' &&
+            'date' in page.properties.publishedAt &&
+            page.properties.publishedAt.date &&
+            'start' in page.properties.publishedAt.date
+              ? page.properties.publishedAt.date.start
+              : '',
           inProgress:
-            'checkbox' in page.properties.inProgress ? page.properties.inProgress.checkbox : false,
+            page.properties.inProgress &&
+            typeof page.properties.inProgress === 'object' &&
+            'checkbox' in page.properties.inProgress
+              ? page.properties.inProgress.checkbox
+              : false,
           isProd:
-            'checkbox' in page.properties.isProd ? page.properties.isProd.checkbox : false,
-          category: page.properties.category && 'select' in page.properties.category 
-            ? page.properties.category.select?.name || 'Uncategorized' 
-            : 'Uncategorized',
-          readingTime: page.properties.readingTime && 'rich_text' in page.properties.readingTime && page.properties.readingTime.rich_text.length > 0
-            ? page.properties.readingTime.rich_text[0].plain_text 
-            : '5 min read',
-          featured: page.properties.featured && 'checkbox' in page.properties.featured
-            ? page.properties.featured.checkbox 
-            : false,
+            page.properties.isProd &&
+            typeof page.properties.isProd === 'object' &&
+            'checkbox' in page.properties.isProd
+              ? page.properties.isProd.checkbox
+              : false,
+          category:
+            page.properties.category &&
+            typeof page.properties.category === 'object' &&
+            'select' in page.properties.category &&
+            page.properties.category.select &&
+            'name' in page.properties.category.select
+              ? page.properties.category.select.name || 'Uncategorized'
+              : 'Uncategorized',
+          readingTime:
+            page.properties.readingTime &&
+            typeof page.properties.readingTime === 'object' &&
+            'rich_text' in page.properties.readingTime &&
+            Array.isArray(page.properties.readingTime.rich_text) &&
+            page.properties.readingTime.rich_text.length > 0 &&
+            page.properties.readingTime.rich_text[0] &&
+            'plain_text' in page.properties.readingTime.rich_text[0]
+              ? page.properties.readingTime.rich_text[0].plain_text
+              : '5 min read',
+          featured:
+            page.properties.featured &&
+            typeof page.properties.featured === 'object' &&
+            'checkbox' in page.properties.featured
+              ? page.properties.featured.checkbox
+              : false,
         };
       })
       .filter((note) => note.isPublished);
