@@ -30,9 +30,12 @@ export const NotePreview = ({ note, dense }: Props) => {
       whileInView={ANIMATION_TO_PROPS}
       viewport={{ once: true }}
     >
+
       <article className="md:grid md:grid-cols-4 md:items-baseline">
         <Card className="md:col-span-3">
-          <Card.Title href={`/notes/${note.slug}`}>{note.title}</Card.Title>
+          <Card.Title href={`/${note.category ? note.category.toLowerCase() : 'notes'}/${note.slug}`}>
+            {note.title}
+          </Card.Title>
           <Card.Eyebrow
             as="time"
             dateTime={note.publishedAt}

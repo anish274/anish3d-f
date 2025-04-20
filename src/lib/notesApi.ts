@@ -13,6 +13,7 @@ export type Note = {
   createdAt: string;
   lastEditedAt: string;
   coverImage: string | null;
+  thumbnail?: string;
   tags: string[];
   title: string;
   description: string;
@@ -21,6 +22,7 @@ export type Note = {
   publishedAt: string;
   inProgress: boolean;
   isProd: boolean;
+  category?: string;
 };
 
 const noop = async (block: BlockObjectResponse) => block;
@@ -168,6 +170,8 @@ class NotesApi {
             'checkbox' in page.properties.inProgress ? page.properties.inProgress.checkbox : false,
           isProd:
             'checkbox' in page.properties.isProd ? page.properties.isProd.checkbox : false,
+          category:
+            'select' in page.properties.category? page.properties.category.select?.name : '',
         };
       })
       .filter((post) => post.isPublished && (process.env.NODE_ENV !== 'production' || post.isProd));

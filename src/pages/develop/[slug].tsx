@@ -1,45 +1,36 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { ArticleJsonLd, NextSeo } from 'next-seo';
+import Image from 'next/image';
 import Prism from 'prismjs';
 import { useEffect, useState } from 'react';
 import Lightbox from "yet-another-react-lightbox";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
 
+import { Breadcrumb } from '../../components/Breadcrumb';
 import { XIcon } from '../../components/icons/XIcon';
-import { NoteLayout } from '../../components/notes/NoteLayout';
+import { DevelopLayout } from '../../components/develop/DevelopLayout';
 import { NotionBlockRenderer } from '../../components/notion/NotionBlockRenderer';
-import { Note as NoteType, notesApi } from '../../lib/notesApi';
+import { DevelopNote, developApi } from '../../lib/developApi';
 
 type Props = {
-  note: NoteType;
+  note: DevelopNote;
   noteContent: any[];
 };
 
 export default function Note({
-  note: { title, description, createdAt, slug },
+  note: { title, description, createdAt, slug, coverImage, tags },
   noteContent,
   previousPathname,
 }: Props & { previousPathname: string }) {
-  // Function to determine the canonical URL based on host
-  const getCanonicalUrl = () => {
-    // Default to main domain path
-    let canonical = `${process.env.NEXT_PUBLIC_URL}/develop/${slug}`;
-    
-    // When rendered on the client, check if we're on the subdomain
-    if (typeof window !== 'undefined') {
-      if (window.location.host.startsWith('develop.')) {
-        canonical = `https://${window.location.host}/${slug}`;
-      }
-    }
-    
-    return canonical;
-  };
+  // Calculate reading time (rough estimate)
+  const text = noteContent.map(block => block.plain_text).join(' ');
+  const words = text.split(/\s+/).length;
+  const readingTime = Math.ceil(words / 50); // words per minute, rounded up
+  const url = `${process.env.NEXT_PUBLIC_URL}/develop/${slug}`;
+  const openGraphImageUrl = coverImage || `${process.env.NEXT_PUBLIC_URL}/api/og?title=${title}&description=${description}`;
 
-  const getOgImageUrl = () => {
-    return `${process.env.NEXT_PUBLIC_URL}/api/og?title=${title}&description=${description}`;
-  };
-
+  // Ensure hooks are called at the top level
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [images, setImages] = useState<Array<{ src: string; alt?: string }>>([]);
@@ -48,7 +39,6 @@ export default function Note({
     Prism.highlightAll();
   }, []);
 
-  // Add click handler for images
   useEffect(() => {
     const handleImageClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -56,8 +46,6 @@ export default function Note({
         e.preventDefault();
         const clickedSrc = (target as HTMLImageElement).src;
         const clickedAlt = (target as HTMLImageElement).alt || 'Image';
-        
-        // Collect all images on the page
         const allImages = Array.from(document.querySelectorAll('img:not(.no-popup)'))
           .map((element) => {
             const img = element as HTMLImageElement;
@@ -66,9 +54,8 @@ export default function Note({
               alt: img.alt || 'Image'
             };
           });
-        
+
         setImages(allImages);
-        // Find the index of the clicked image
         const index = allImages.findIndex(img => img.src === clickedSrc);
         setLightboxIndex(index >= 0 ? index : 0);
         setLightboxOpen(true);
@@ -79,13 +66,11 @@ export default function Note({
     return () => document.removeEventListener('click', handleImageClick);
   }, []);
 
-  // Add this effect to apply the cursor style to all images
   useEffect(() => {
     const images = document.querySelectorAll('img:not(.no-popup)');
     images.forEach(img => {
       (img as HTMLElement).style.cursor = 'pointer';
     });
-    
     return () => {
       // Clean up if needed
     };
@@ -96,24 +81,29 @@ export default function Note({
       <NextSeo
         title={title}
         description={description}
-        canonical={getCanonicalUrl()}
+        canonical={url}
         openGraph={{
-          images: [{ url: getOgImageUrl() }],
+          images: [{ url: openGraphImageUrl }],
         }}
       />
       <ArticleJsonLd
-        url={getCanonicalUrl()}
-        images={[getOgImageUrl()]}
+        url={url}
+        images={[openGraphImageUrl]}
         title={title}
         datePublished={createdAt}
         authorName="Anish Shah"
         description={description}
       />
-      <NoteLayout
-        meta={{ title, description, date: createdAt }}
+
+      <DevelopLayout
+        title={title}
+        coverImage={coverImage}
+        publishDate={createdAt}
+        readingTime={readingTime}
         previousPathname={previousPathname}
+        className="max-w-4xl"
       >
-        <div className="pb-32">
+        <div className="pb-16 w-full">
           {noteContent.map((block) => (
             <NotionBlockRenderer key={block.id} block={block} />
           ))}
@@ -122,7 +112,7 @@ export default function Note({
 
           <a
             className="group block text-xl font-semibold md:text-3xl no-underline"
-            href={`http://x.com/share?text=${title}&url=${getCanonicalUrl()}`}
+            href={`http://x.com/share?text=${title}&url=${url}`}
           >
             <h4 className="max-w-lg flex cursor-pointer flex-col duration-200 ease-in-out group-hover:text-primary group-hover:fill-primary fill-white text-wrap">
               <XIcon className="my-6 h-10 w-10 transform transition-transform group-hover:-rotate-12 text-black dark:text-white group-hover:text-primary" />
@@ -130,7 +120,7 @@ export default function Note({
             </h4>
           </a>
         </div>
-      </NoteLayout>
+      </DevelopLayout>
 
       <Lightbox
         open={lightboxOpen}
@@ -160,7 +150,15 @@ export default function Note({
 
 export const getStaticProps: GetStaticProps<Props, { slug: string }> = async (context) => {
   const slug = context.params?.slug;
-  const allNotes = await notesApi.getNotes();
+
+  // Check if slug is undefined and handle the error
+  if (!slug) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const allNotes = await developApi.getNotes();
   const note = allNotes.find((note) => note.slug === slug);
 
   if (!note) {
@@ -169,7 +167,7 @@ export const getStaticProps: GetStaticProps<Props, { slug: string }> = async (co
     };
   }
 
-  const noteContent = await notesApi.getNote(note.id);
+  const noteContent = await developApi.getNote(note.id);
 
   return {
     props: {
@@ -181,10 +179,26 @@ export const getStaticProps: GetStaticProps<Props, { slug: string }> = async (co
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const posts = await notesApi.getNotes();
+  const posts = await developApi.getNotes();
 
   return {
     paths: posts.map((post) => ({ params: { slug: post.slug } })),
     fallback: 'blocking',
   };
 };
+
+
+// async function getDatabaseContent() {
+//   const response = await developApi.getDatabaseContent();
+
+//   // Ensure response is defined and has the expected structure
+//   if (response && 'files' in response) {
+//     // Proceed with processing files
+//     const files = response.files.map(file => {
+//       // Process each file
+//     });
+//   } else {
+//     console.error("Unexpected response structure:", response);
+//     // Handle the error or return a default value
+//   }
+// }

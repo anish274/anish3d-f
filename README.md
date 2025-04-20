@@ -79,3 +79,6 @@ Blog post example
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
+
+---
+Last updated: 2024

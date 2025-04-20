@@ -42,7 +42,13 @@ export default async function handler(
     //const pdfPath = './public/assets/documents/AnishShah227.pdf';
     // Load the PDF document
     const loader = new PDFLoader(pdfPath);
-    const docs = await loader.load();
+    let docs;
+    try {
+      docs = await loader.load();
+    } catch (error: any) {
+      console.error('Error loading PDF:', error);
+      return res.status(500).json({ error: 'Failed to load PDF document. Please ensure the PDF is valid.' });
+    }
     
     // Split the document into chunks
     const textSplitter = new RecursiveCharacterTextSplitter({

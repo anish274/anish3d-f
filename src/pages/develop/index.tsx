@@ -1,65 +1,82 @@
 import { GetStaticProps } from 'next';
 import { NextSeo } from 'next-seo';
+import { motion } from 'framer-motion';
 
 import { Badge } from '../../components/Badge';
 import { PageLayout } from '../../components/PageLayout';
-import { NotePreview } from '../../components/notes/NotePreview';
-import { Note, notesApi } from '../../lib/notesApi';
+import { DevelopNote, developApi } from '../../lib/developApi';
+import { FeaturedArticles } from '../../components/develop/FeaturedArticles';
+import { RegularArticles } from '../../components/develop/RegularArticles';
+import { NewsletterSubscribe } from '../../components/develop/NewsletterSubscribe';
 
-const seoTitle = 'Notes';
+const seoTitle = 'Development - Tech Notes regarding building small tools, AI and other stuff';
 const seoDescription =
-  'All of my thoughts on programming, building products, leadership, and more. Not structured.';
+  'Explore my thoughts on programming, building products, AI, and tech leadership. A curated collection of development insights.';
 
 interface Props {
-  notes: Note[];
+  notes: DevelopNote[];
   tags: Array<string>;
 }
 
 export default function Notes({ notes, tags }: Props) {
-  // Function to determine the canonical URL based on host
-  const getCanonicalUrl = () => {
-    // Default to main domain path
-    let canonical = `${process.env.NEXT_PUBLIC_URL}/develop`;
-    
-    // When rendered on the client, check if we're on the subdomain
-    if (typeof window !== 'undefined') {
-      if (window.location.host.startsWith('develop.')) {
-        canonical = `https://${window.location.host}`;
-      }
-    }
-    
-    return canonical;
-  };
+  // Get featured articles (first 3)
+  const featuredArticles = notes.slice(0, 4);
+  const regularArticles = notes.slice();
 
   return (
     <>
       <NextSeo
         title={seoTitle}
         description={seoDescription}
-        canonical={getCanonicalUrl()}
+        canonical={`${process.env.NEXT_PUBLIC_URL}/develop`}
         openGraph={{
           images: [{ url: `${process.env.NEXT_PUBLIC_URL}/api/og?title=${seoTitle}` }],
         }}
       />
       <PageLayout
-        title="DEVELOP on software, building products, and other stuff."
-        intro="All of my thoughts on programming, building products, leadership, travelling, whisky, and other random stuff. Not structured."
+        title="Development - Tech Notes regarding building small tools, AI and other stuff."
+        intro="A curated collection of thoughts on programming, building small tools, AI, and tech leadership. Not with expertise, but hopefully useful."
+        heroImage="/images/develop-hero.png"
       >
-        <h3 className="text-2xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100">Tags</h3>
-        <div className="mt-4 flex max-w-xl flex-wrap gap-1 font-mono">
-          {tags.map((tag) => (
-            <Badge key={tag} href={`/tags/${tag}`}>
-              #{tag}
-            </Badge>
-          ))}
-        </div>
+        <div className="relative">
+          {/* Show message if no notes found */}
+          {notes.length === 0 ? (
+            <div className="text-center text-lg text-zinc-500 my-12">No notes found</div>
+          ) : (
+            <>
+              {/* Featured Articles */}
+              <FeaturedArticles articles={featuredArticles} />
 
-        <div className="mt-24 md:border-l md:border-zinc-100 md:pl-6 md:dark:border-zinc-700/40">
-          <div className="flex max-w-3xl flex-col space-y-16">
-            {notes.map((note) => (
-              <NotePreview key={note.slug} note={note} />
-            ))}
-          </div>
+              {/* Newsletter Section */}
+              <NewsletterSubscribe />
+
+              {/* Regular Articles */}
+              <RegularArticles articles={regularArticles} />
+            </>
+          )}
+
+          {/* Tags Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className=""
+          >
+            <h3 className="text-2xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 mt-4 mb-4">Tags</h3>
+            <div className="flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <motion.div
+                  key={tag}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Badge href={`/tags/${tag}`}>
+                    #{tag}
+                  </Badge>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </PageLayout>
     </>
@@ -67,7 +84,7 @@ export default function Notes({ notes, tags }: Props) {
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const notes = await notesApi.getNotes('desc');
+  const notes = await developApi.getNotes('desc');
 
   return {
     props: {
