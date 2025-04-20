@@ -157,7 +157,6 @@ class DevelopApi {
 
         // Handle cover image from Files & Media property
         let coverImage = null;
-        // Fix: Safely check for cover property and files array
         if (
           page.properties.cover &&
           typeof page.properties.cover === 'object' &&
@@ -179,6 +178,8 @@ class DevelopApi {
           lastEditedAt: page.last_edited_time,
           coverImage,
           tags:
+            page.properties.hashtags &&
+            typeof page.properties.hashtags === 'object' &&
             'multi_select' in page.properties.hashtags
               ? page.properties.hashtags.multi_select.map((tag) => tag.name)
               : [],
