@@ -46,7 +46,6 @@ export default function Note({
         e.preventDefault();
         const clickedSrc = (target as HTMLImageElement).src;
         const clickedAlt = (target as HTMLImageElement).alt || 'Image';
-
         const allImages = Array.from(document.querySelectorAll('img:not(.no-popup)'))
           .map((element) => {
             const img = element as HTMLImageElement;
@@ -72,7 +71,6 @@ export default function Note({
     images.forEach(img => {
       (img as HTMLElement).style.cursor = 'pointer';
     });
-
     return () => {
       // Clean up if needed
     };
