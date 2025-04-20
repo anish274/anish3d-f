@@ -91,10 +91,14 @@ class DevelopApi {
   constructor(
     private readonly notion: Client,
     private readonly databaseId: string,
-  ) {}
+  ) {
+    // logger.info('DevelopApi initialized with databaseId: %s', databaseId);
+  }
 
   async getNotes(sortOrder: 'asc' | 'desc' = 'desc', limit?: number) {
+    // logger.info('Fetching notes with sortOrder=%s, limit=%s', sortOrder, limit);
     const notes = await this.getDatabaseContent();
+    // logger.info('Fetched %d notes from database', notes.length);
 
     return notes
       .sort((a, b) => {
@@ -104,42 +108,59 @@ class DevelopApi {
   }
 
   async getFeaturedNotes(limit: number = 3) {
+    // logger.info('Fetching featured notes, limit=%d', limit);
     const notes = await this.getDatabaseContent();
-    return notes
-      .filter(note => note.featured)
+    const featured = notes.filter(note => note.featured);
+    // logger.info('Found %d featured notes', featured.length);
+    return featured
       .sort((a, b) => CompareFunctionLookup.desc(new Date(a.publishedAt), new Date(b.publishedAt)))
       .slice(0, limit);
   }
 
   async getNotesByCategory(category: string, sortOrder: 'asc' | 'desc' = 'desc', limit?: number) {
+    // logger.info('Fetching notes by category: %s', category);
     const notes = await this.getNotes(sortOrder, limit);
-    return notes.filter((note) => note.category === category);
+    const filtered = notes.filter((note) => note.category === category);
+    // logger.info('Found %d notes in category %s', filtered.length, category);
+    return filtered;
   }
 
   async getNotesByTag(tag: string, sortOrder: 'asc' | 'desc' = 'desc', limit?: number) {
+    // logger.info('Fetching notes by tag: %s', tag);
     const notes = await this.getNotes(sortOrder, limit);
-    return notes.filter((note) => note.tags.includes(tag));
+    const filtered = notes.filter((note) => note.tags.includes(tag));
+    // logger.info('Found %d notes with tag %s', filtered.length, tag);
+    return filtered;
   }
 
   async getNote(id: string) {
+    // logger.info('Fetching note with id: %s', id);
     return this.getPageContent(id);
   }
 
   async getAllTags() {
+    // logger.info('Fetching all tags');
     const notes = await this.getNotes();
-    return Array.from(new Set(notes.map((note) => note.tags).flat()));
+    const tags = Array.from(new Set(notes.map((note) => note.tags).flat()));
+    // logger.info('Found %d unique tags', tags.length);
+    return tags;
   }
 
   async getAllCategories() {
+    // logger.info('Fetching all categories');
     const notes = await this.getNotes();
-    return Array.from(new Set(notes.map((note) => note.category)));
+    const categories = Array.from(new Set(notes.map((note) => note.category)));
+    // logger.info('Found %d unique categories', categories.length);
+    return categories;
   }
 
   // Change from private to public
   public async getDatabaseContent() {
+    // logger.info('Querying Notion database: %s', this.databaseId);
     const db = await this.notion.databases.query({ database_id: this.databaseId });
 
     while (db.has_more && db.next_cursor) {
+      // logger.info('Fetching more results from Notion database...');
       const { results, has_more, next_cursor } = await this.notion.databases.query({
         database_id: this.databaseId,
         start_cursor: db.next_cursor,
@@ -149,9 +170,12 @@ class DevelopApi {
       db.next_cursor = next_cursor;
     }
 
+    // logger.info('Mapping %d pages from Notion database', db.results.length);
+
     return db.results
       .map((page) => {
         if (!isFullPage(page)) {
+          // logger.error('Notion page is not a full page: %o', page);
           throw new Error('Notion page is not a full page');
         }
 
@@ -266,19 +290,17 @@ class DevelopApi {
               : false,
         };
       })
-      // Log the current NODE_ENV before filtering
-      // eslint-disable-next-line no-console
       .filter((note) => {
-        console.log('NODE_ENV:::', process.env.NODE_ENV);
+        // logger.info(`NODE_ENV::: ${process.env.NODE_ENV}`);
         return (
           note.isPublished &&
           (!['development', 'production', 'preview'].includes(process.env.NODE_ENV ?? '') || note.isProd)
         );
       });
-      // .filter((note) => note.isPublished);
-  };
+  }
 
   private getPageContent = async (pageId: string) => {
+    // logger.info('Fetching page content for pageId: %s', pageId);
     const blocks = await this.getBlocks(pageId);
 
     const blocksChildren = await Promise.all(
@@ -286,8 +308,9 @@ class DevelopApi {
         const { id } = block;
         const contents = block[block.type as keyof typeof block] as any;
         if (!['unsupported', 'child_page'].includes(block.type) && block.has_children) {
+          // logger.info('Fetching child blocks for blockId: %s', id);
           const childBlocks = await this.getBlocks(id);
-          
+
           if (block.type === 'column_list' || block.type === 'column') {
             const processedChildBlocks = await Promise.all(
               childBlocks.map(async (childBlock) => {
@@ -313,6 +336,7 @@ class DevelopApi {
         return BlockTypeTransformLookup[block.type as BlockType](block);
       }),
     ).then((blocks) => {
+      // logger.info('Processed %d blocks for pageId: %s', blocks.length, pageId);
       return blocks.reduce((acc: any, curr) => {
         if (curr.type === 'bulleted_list_item') {
           if (acc[acc.length - 1]?.type === 'bulleted_list') {
@@ -341,11 +365,13 @@ class DevelopApi {
   };
 
   private getBlocks = async (blockId: string) => {
+    // logger.info('Fetching blocks for blockId: %s', blockId);
     const list = await this.notion.blocks.children.list({
       block_id: blockId,
     });
 
     while (list.has_more && list.next_cursor) {
+      // logger.info('Fetching more child blocks for blockId: %s', blockId);
       const { results, has_more, next_cursor } = await this.notion.blocks.children.list({
         block_id: blockId,
         start_cursor: list.next_cursor,
@@ -355,6 +381,7 @@ class DevelopApi {
       list.next_cursor = next_cursor;
     }
 
+    // logger.info('Fetched %d blocks for blockId: %s', list.results.length, blockId);
     return list.results as BlockObjectResponse[];
   };
 }
