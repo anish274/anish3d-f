@@ -39,17 +39,22 @@ export default function Notes({ notes, tags }: Props) {
         heroImage="/images/develop-hero.png"
       >
         <div className="relative">
-          {/* Featured Articles */}
-          <FeaturedArticles articles={featuredArticles} />
+          {/* Show message if no notes found */}
+          {notes.length === 0 ? (
+            <div className="text-center text-lg text-zinc-500 my-12">No notes found</div>
+          ) : (
+            <>
+              {/* Featured Articles */}
+              <FeaturedArticles articles={featuredArticles} />
 
-          {/* Newsletter Section */}
-          <NewsletterSubscribe />
+              {/* Newsletter Section */}
+              <NewsletterSubscribe />
 
+              {/* Regular Articles */}
+              <RegularArticles articles={regularArticles} />
+            </>
+          )}
 
-          {/* Regular Articles */}
-          <RegularArticles articles={regularArticles} />
-
-          
           {/* Tags Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
