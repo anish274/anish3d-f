@@ -19,8 +19,8 @@ interface Props {
 }
 
 export default function Notes({ notes, tags }: Props) {
-  // Get featured articles (first 3)
-  const featuredArticles = notes.slice(0, 4);
+  // Get featured articles where 'featured' is true
+  const featuredArticles = notes.filter(note => note.featured === true);
   const regularArticles = notes.slice();
 
   return (
@@ -84,13 +84,24 @@ export default function Notes({ notes, tags }: Props) {
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const notes = await developApi.getNotes('desc');
-
-  return {
-    props: {
-      notes,
-      tags: Array.from(new Set(notes.map((post) => post.tags).flat())),
-    },
-    revalidate: 10,
-  };
+  try {
+    const notes = await developApi.getNotes('desc');
+    console.log('Fetched notes:', notes); // Add this for debugging
+    return {
+      props: {
+        notes,
+        tags: Array.from(new Set(notes.map((post) => post.tags).flat())),
+      },
+      revalidate: 10,
+    };
+  } catch (error) {
+    console.error('Error fetching notes:', error); // Add this for debugging
+    return {
+      props: {
+        notes: [],
+        tags: [],
+      },
+      revalidate: 10,
+    };
+  }
 };
