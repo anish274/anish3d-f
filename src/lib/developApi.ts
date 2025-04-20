@@ -155,20 +155,20 @@ class DevelopApi {
           throw new Error('Notion page is not a full page');
         }
 
-        // Debug cover image
-        //console.log('Page properties:', page.properties);
-        // console.log('Page ID:', page.id);
-        // console.log('Page title:', page.properties.title);
-
         // Handle cover image from Files & Media property
         let coverImage = null;
-        if ('files' in page.properties.cover && page.properties.cover.files.length > 0) {
+        // Fix: Safely check for cover property and files array
+        if (
+          page.properties.cover &&
+          typeof page.properties.cover === 'object' &&
+          'files' in page.properties.cover &&
+          Array.isArray(page.properties.cover.files) &&
+          page.properties.cover.files.length > 0
+        ) {
           const file = page.properties.cover.files[0];
           if (file.type === 'external') {
-            // console.log('External URL:', file.external.url);
             coverImage = file.external.url;
           } else if (file.type === 'file') {
-            // console.log('File URL:', file.file.url);
             coverImage = file.file.url;
           }
         }
