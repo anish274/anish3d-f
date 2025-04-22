@@ -75,14 +75,53 @@ export const NotionBlockRenderer = ({ block }: Props) => {
         </ol>
       );
     case 'bulleted_list_item':
-    case 'numbered_list_item':
+      // Separate children into sublist items and other blocks
+      const bulletChildren = value.children || [];
+      const sublistItems = bulletChildren.filter(
+        (child: any) => child.type === 'bulleted_list_item'
+      );
+      const otherChildren = bulletChildren.filter(
+        (child: any) => child.type !== 'bulleted_list_item'
+      );
       return (
-        <li className="pl-0">
+        <li className="list-disc">
           <NotionText textItems={value.rich_text} />
-          {!!value.children &&
-            value.children?.map((block: any) => (
-              <NotionBlockRenderer key={block.id} block={block} />
-            ))}
+          {/* Render other children (e.g., callouts, paragraphs) */}
+          {otherChildren.map((block: any) => (
+            <NotionBlockRenderer key={block.id} block={block} />
+          ))}
+          {/* Render sublist if present */}
+          {sublistItems.length > 0 && (
+            <ul className="list-circle">
+              {sublistItems.map((block: any) => (
+                <NotionBlockRenderer key={block.id} block={block} />
+              ))}
+            </ul>
+          )}
+        </li>
+      );
+    case 'numbered_list_item':
+      // Separate children into sublist items and other blocks
+      const numberedChildren = value.children || [];
+      const subNumberedItems = numberedChildren.filter(
+        (child: any) => child.type === 'numbered_list_item'
+      );
+      const otherNumberedChildren = numberedChildren.filter(
+        (child: any) => child.type !== 'numbered_list_item'
+      );
+      return (
+        <li className="numbered_list_item">
+          <NotionText textItems={value.rich_text} />
+          {otherNumberedChildren.map((block: any) => (
+            <NotionBlockRenderer key={block.id} block={block} />
+          ))}
+          {subNumberedItems.length > 0 && (
+            <ol className="ml-4 list-decimal">
+              {subNumberedItems.map((block: any) => (
+                <NotionBlockRenderer key={block.id} block={block} />
+              ))}
+            </ol>
+          )}
         </li>
       );
     case 'to_do':
@@ -180,10 +219,11 @@ export const NotionBlockRenderer = ({ block }: Props) => {
           <div className="flex-1 [&>h3]:mt-0">
             <div className="mb-2">
               <NotionText textItems={value.rich_text} />
+              {/* Render children blocks (including bullet lists) immediately after the main text */}
+              {value.children?.map((block: any) => (
+                <NotionBlockRenderer key={block.id} block={block} />
+              ))}
             </div>
-            {value.children?.map((block: any) => (
-              <NotionBlockRenderer key={block.id} block={block} />
-            ))}
           </div>
         </div>
       );

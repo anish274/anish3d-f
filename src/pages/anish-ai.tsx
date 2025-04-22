@@ -89,9 +89,8 @@ export default function Creating({ show404 }: { show404: boolean }) {
       />
       <PageLayout
         title="Anish - AI"
-        intro="A simple tool with AI integration. Ask anything about me, powered by document understanding using AI.
-        - Generate embeddings. - Store embeddings using  VectorStore
-        - Query via LangChain’s retrieval chains."
+        intro="A simple tool with AI integration. Ask anything about me, powered by AI.
+        "
       >
         
         <div className="mx-auto max-w-2xl lg:max-w-5xl">

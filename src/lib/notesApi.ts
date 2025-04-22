@@ -165,7 +165,7 @@ class NotesApi {
           isPublished:
             'checkbox' in page.properties.published ? page.properties.published.checkbox : false,
           publishedAt:
-            'date' in page.properties.publishedAt ? page.properties.publishedAt.date!.start : '',
+            page.properties.publishedAt && 'date' in page.properties.publishedAt ? page.properties.publishedAt.date?.start : '',
           inProgress:
             'checkbox' in page.properties.inProgress ? page.properties.inProgress.checkbox : false,
           isProd:
