@@ -76,12 +76,12 @@ module.exports = {
             hr: { borderColor: theme('colors.gray.700') },
             ol: {
               li: {
-                '&:before': { color: theme('colors.gray.500') },
+                // '&:before': { color: theme('colors.gray.500') },
               },
             },
             ul: {
               li: {
-                '&:before': { backgroundColor: theme('colors.gray.500') },
+                // '&:before': { backgroundColor: theme('colors.gray.500') },
               },
             },
             strong: { color: theme('colors.gray.100') },
@@ -94,6 +94,9 @@ module.exports = {
                 borderBottomColor: theme('colors.gray.700'),
               },
             },
+            // 'ul ul, ol ul, ul ol, ol ol': {
+            //   marginLeft: '1.5rem', // Increase as needed
+            // },
           },
         },
       }),

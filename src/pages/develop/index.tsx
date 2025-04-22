@@ -86,7 +86,6 @@ export default function Notes({ notes, tags }: Props) {
 export const getStaticProps: GetStaticProps<Props> = async () => {
   try {
     const notes = await developApi.getNotes('desc');
-    console.log('Fetched notes:', notes); // Add this for debugging
     return {
       props: {
         notes,

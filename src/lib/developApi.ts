@@ -294,7 +294,7 @@ class DevelopApi {
         // logger.info(`NODE_ENV::: ${process.env.NODE_ENV}`);
         return (
           note.isPublished &&
-          (!['development', 'production', 'preview'].includes(process.env.NODE_ENV ?? '') || note.isProd)
+          (!['production', 'preview'].includes(process.env.NODE_ENV ?? '') || note.isProd)
         );
       });
   }
