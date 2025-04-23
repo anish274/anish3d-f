@@ -27,8 +27,11 @@ export const ArticleCard = ({
   isFeatured = false,
   priority = false,
   featuredBadgeColor = 'bg-primary/80',
-  colorTheme, // <-- Add this line
+  colorTheme,
 }: ArticleCardProps) => {
+  if (!article) {
+    return null;
+  }
   const DEFAULT_THUMBNAIL = '/images/default-thumbnail.jpg';
   // Use min-h for flexibility and remove fixed h-[] on mobile
   const height = isFeatured
@@ -56,7 +59,7 @@ export const ArticleCard = ({
               alt={article.title}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover brightness-90 group-hover:brightness-100 transition duration-300 rounded-t-xl"
+              className="object-cover brightness-90 blur-sm group-hover:brightness-100 transition duration-300 rounded-t-xl"
               priority={priority}
               quality={isFeatured ? 90 : 85}
               onError={(e) => {
@@ -64,7 +67,7 @@ export const ArticleCard = ({
                 e.currentTarget.src = DEFAULT_THUMBNAIL;
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent rounded-t-xl" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent rounded-t-xl" />
             {/* Featured Badge for <md */}
             {isFeatured && (
               <div className="absolute top-2 left-2 z-10">
