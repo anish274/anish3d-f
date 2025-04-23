@@ -3,24 +3,30 @@ import Image from 'next/image';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 interface PageLayoutProps {
-  children: ReactNode;
   title: string;
   intro: string;
   heroImage?: string;
+  heroImageClassName?: string; // already added
+  children: React.ReactNode;
 }
 
-export const PageLayout = ({ children, title, intro, heroImage = '/images/hero-bg.jpg' }: PageLayoutProps) => {
+export function PageLayout({
+  title,
+  intro,
+  heroImage,
+  heroImageClassName,
+  children,
+}: PageLayoutProps) {
+  // Add these hooks for parallax effect
   const { scrollY } = useScroll();
-  const y = useTransform(scrollY, [0, 400], [0, 100]);
-  const opacity = useTransform(scrollY, [0, 300], [1, 0]);
+  const y = useTransform(scrollY, [0, 300], [0, 100]);
+  const opacity = useTransform(scrollY, [0, 200], [1, 0.7]); // Example: fade out on scroll
   const [mounted, setMounted] = useState(false);
-
   useEffect(() => {
     setMounted(true);
   }, []);
-
   return (
-    <div className="relative">
+    <div>
       {/* Hero Section with Background Image */}
       <div className="mt-4 relative h-[500px] w-full overflow-hidden">
         {/* Background Image with Parallax */}
@@ -28,14 +34,16 @@ export const PageLayout = ({ children, title, intro, heroImage = '/images/hero-b
           className="absolute inset-0"
           style={{ y }}
         >
-          <Image
-            src={heroImage}
-            alt="Hero background"
-            fill
-            priority
-            className="object-cover brightness-50 scale-105"
-            sizes="100vw"
-          />
+          {heroImage && (
+            <Image
+              src={heroImage}
+              alt="Hero background"
+              fill
+              priority
+              className={["object-cover brightness-50 scale-105", heroImageClassName].filter(Boolean).join(" ")}
+              sizes="100vw"
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/30" />
         </motion.div>
         
@@ -98,4 +106,4 @@ export const PageLayout = ({ children, title, intro, heroImage = '/images/hero-b
       </div>
     </div>
   );
-};
+}

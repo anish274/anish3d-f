@@ -7,11 +7,11 @@ import Lightbox from "yet-another-react-lightbox";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
 
-import { Breadcrumb } from '../../components/Breadcrumb';
-import { XIcon } from '../../components/icons/XIcon';
-import { DevelopLayout } from '../../components/develop/DevelopLayout';
-import { NotionBlockRenderer } from '../../components/notion/NotionBlockRenderer';
-import { DevelopNote, developApi } from '../../lib/developApi';
+import { Breadcrumb } from '../components/Breadcrumb';
+import { XIcon } from '../components/icons/XIcon';
+import { DevelopLayout } from '../components/develop/DevelopLayout';
+import { NotionBlockRenderer } from '../components/notion/NotionBlockRenderer';
+import { DevelopNote, developApi } from '../lib/developApi';
 
 type Props = {
   note: DevelopNote;
@@ -27,7 +27,7 @@ export default function Note({
   const text = noteContent.map(block => block.plain_text).join(' ');
   const words = text.split(/\s+/).length;
   const readingTime = Math.ceil(words / 50); // words per minute, rounded up
-  const url = `${process.env.NEXT_PUBLIC_URL}/${slug}`;
+  const url = `${process.env.NEXT_PUBLIC_URL}/develop/${slug}`;
   const openGraphImageUrl = coverImage || `${process.env.NEXT_PUBLIC_URL}/api/og?title=${title}&description=${description}`;
 
   // Ensure hooks are called at the top level
