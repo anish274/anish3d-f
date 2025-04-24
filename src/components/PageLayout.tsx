@@ -13,7 +13,7 @@ interface PageLayoutProps {
 export function PageLayout({
   title,
   intro,
-  heroImage,
+  heroImage = "/images/hero-bg.jpg", // <-- Fixed: use leading slash
   heroImageClassName,
   children,
 }: PageLayoutProps) {

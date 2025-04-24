@@ -1,3 +1,4 @@
+import '../../sentry.client.config'; // or just 'sentry.client.config' if in root
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 

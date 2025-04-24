@@ -45,12 +45,12 @@ export const ArticleCard = ({
   // Define hoverColorClass here, before return
   const hoverUnderlineClass =
     colorTheme === 'blue'
-      ? 'bg-blue-400'
+      ? 'bg-blue-600'
       : 'bg-primary-light';
 
   const hoverColorClass =
     colorTheme === 'blue'
-      ? 'group-hover:text-blue-400'
+      ? 'group-hover:text-blue-600'
       : 'group-hover:text-primary-light';
 
 
@@ -128,7 +128,7 @@ export const ArticleCard = ({
               alt={article.title}
               fill
               sizes="(max-width: 1200px) 50vw, 33vw"
-              className="object-cover brightness-70 blur-sm group-hover:brightness-100 transition duration-300 rounded-xl"
+              className="object-cover brightness-90 group-hover:brightness-100 transition duration-300 rounded-xl"
               priority={priority}
               quality={isFeatured ? 90 : 85}
               onError={(e) => {
@@ -136,7 +136,7 @@ export const ArticleCard = ({
                 e.currentTarget.src = DEFAULT_THUMBNAIL;
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent rounded-xl bg-black/40" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent rounded-xl" />
           </div>
         ) : (
           <div className="w-full h-[350px] md:h-[450px] bg-gray-200 dark:bg-zinc-800 flex items-center justify-center rounded-xl" />
@@ -155,9 +155,9 @@ export const ArticleCard = ({
         {/* Content at bottom */}
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 lg:p-10">
           <Link href={`/${article.slug}`} className="block">
-            <h3 className={`${titleSize} font-bold text-white ${hoverColorClass} relative inline-block text-shadow`}>
+            <h3 className={`${titleSize} font-bold text-white ${hoverColorClass} relative inline-block`}>
               {article.title}
-              <span className={`absolute bottom-0 left-0 w-0 h-0.5 ${hoverUnderlineClass} opacity-0 group-hover:w-full group-hover:opacity-100 transition-all duration-300`}></span>
+              <span className={`absolute bottom-0 left-0 w-full h-0.5 ${hoverUnderlineClass} opacity-0 group-hover:opacity-100 transition-opacity duration-200`}></span>
             </h3>
             <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-white/60">
               <span>{formatDate(article.publishedAt)}</span>
