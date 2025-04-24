@@ -10,7 +10,16 @@ import { CloseIcon } from './icons/CloseIcon';
 // Get the environment variable to determine if Creating page should be hidden
 // const hideCreatingPage = process.env.HIDE_PAGE_CREATING?.toUpperCase() === 'TRUE';
 
-export const NavigationItems = [
+// Add this type definition above NavigationItems
+type NavigationItem = {
+  name: string;
+  href: string;
+  type: 'internal' | 'external';
+  isSpecial?: boolean;
+  color?: string; // <-- Add color property
+};
+
+export const NavigationItems: readonly NavigationItem[] = [
   {
     name: 'Home',
     href: '/',
@@ -31,6 +40,21 @@ export const NavigationItems = [
     href: '/develop',
     type: 'internal',
     isSpecial: true,
+    color: 'red', // <-- Red for Develop
+  },
+  {
+    name: 'Deliver',
+    href: '/deliver',
+    type: 'internal',
+    isSpecial: true,
+    color: 'blue', // <-- Blue for Deliver
+  },
+  {
+    name: 'Discover',
+    href: '/discover',
+    type: 'internal',
+    isSpecial: true,
+    // You can set a color for Discover if needed
   },
   {
     name: 'Uses',
@@ -77,7 +101,9 @@ export const NavLink = ({ href, children }: React.PropsWithChildren<{ href: stri
 
 const NavItem = ({ href, children }: React.PropsWithChildren<{ href: string }>) => {
   const isActive = useRouter().pathname === href;
-  const isDevelopPage = href === '/develop';
+  const navItem = NavigationItems.find(item => item.href === href);
+  const isSpecial = navItem?.isSpecial;
+  const color = navItem?.color;
   const pagesToHide = process.env.NEXT_PUBLIC_MAKE_PAGE_404?.split(',') || [];
   
   if (pagesToHide.includes(href)) {
@@ -89,28 +115,71 @@ const NavItem = ({ href, children }: React.PropsWithChildren<{ href: string }>) 
           href={href}
           className={clsx(
             'relative block px-3 py-2 transition-all duration-300',
-            isActive ? 'text-primary' : 'hover:text-primary',
-            isDevelopPage && 'group',
-            isDevelopPage && isActive && 'scale-105 font-semibold',
+            isActive
+              ? color === 'red'
+                ? 'text-red-600'
+                : color === 'blue'
+                ? 'text-blue-600'
+                : 'text-primary'
+              : color === 'red'
+              ? 'hover:text-red-600'
+              : color === 'blue'
+              ? 'hover:text-blue-600'
+              : 'hover:text-primary',
+            isSpecial && 'group',
+            isSpecial && isActive && 'scale-105 font-semibold',
           )}
         >
           {children}
-          {isDevelopPage && (
+          {isSpecial && (
             <>
               {/* Subtle background effect */}
-              <span className="absolute inset-0 -z-10 rounded-md bg-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-              
+              <span
+                className={clsx(
+                  "absolute inset-0 -z-10 rounded-md opacity-0 transition-opacity duration-300 group-hover:opacity-100",
+                  color === 'red'
+                    ? 'bg-red-100 dark:bg-red-900/30'
+                    : color === 'blue'
+                    ? 'bg-blue-100 dark:bg-blue-900/30'
+                    : 'bg-primary/5'
+                )}
+              />
               {/* Animated underline */}
-              <span className="absolute inset-x-1 -bottom-px h-px bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 opacity-0 transition-all duration-300 group-hover:opacity-100" />
-              
+              <span
+                className={clsx(
+                  "absolute inset-x-1 -bottom-px h-px opacity-0 transition-all duration-300 group-hover:opacity-100",
+                  color === 'red'
+                    ? 'bg-gradient-to-r from-red-100/0 via-red-500/50 to-red-100/0'
+                    : color === 'blue'
+                    ? 'bg-gradient-to-r from-blue-100/0 via-blue-500/50 to-blue-100/0'
+                    : 'bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0'
+                )}
+              />
               {/* Pulsing dot for active state */}
               {isActive && (
-                <span className="absolute -right-1 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-primary animate-ping" />
+                <span
+                  className={clsx(
+                    "absolute -right-1 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full animate-ping",
+                    color === 'red'
+                      ? 'bg-red-600'
+                      : color === 'blue'
+                      ? 'bg-blue-600'
+                      : 'bg-primary'
+                  )}
+                />
               )}
-              
               {/* Glowing border for active state */}
               {isActive && (
-                <span className="absolute inset-0 rounded-md ring-1 ring-primary/30 ring-offset-2 ring-offset-white dark:ring-offset-zinc-900 animate-pulse" />
+                <span
+                  className={clsx(
+                    "absolute inset-0 rounded-md ring-1 ring-offset-2 ring-offset-white dark:ring-offset-zinc-900 animate-pulse",
+                    color === 'red'
+                      ? 'ring-red-400/30'
+                      : color === 'blue'
+                      ? 'ring-blue-400/30'
+                      : 'ring-primary/30'
+                  )}
+                />
               )}
             </>
           )}
@@ -121,13 +190,27 @@ const NavItem = ({ href, children }: React.PropsWithChildren<{ href: string }>) 
 };
 
 export const MobileNavItem = ({ href, children }: React.PropsWithChildren<{ href: string }>) => {
-  return (
-    <li>
-      <Popover.Button as={Link} href={href} className="block py-2">
-        {children}
-      </Popover.Button>
-    </li>
-  );
+  const isActive = useRouter().pathname === href;
+  const navItem = NavigationItems.find(item => item.href === href);
+  const isSpecial = navItem?.isSpecial;
+  const pagesToHide = process.env.NEXT_PUBLIC_MAKE_PAGE_404?.split(',') || [];
+  if (pagesToHide.includes(href)) {
+
+  } else {
+    return (
+      <li>
+        <Popover.Button as={Link} href={href} className={clsx(
+            'relative block px-3 py-2 transition-all duration-300',
+            isActive ? 'text-primary' : 'hover:text-primary',
+            isSpecial && 'group',
+            isSpecial && isActive && 'scale-105 font-semibold',
+          )}>
+          {children}
+        </Popover.Button>
+      </li>
+    );
+  }
+  
 };
 
 export const DesktopNavigation = (

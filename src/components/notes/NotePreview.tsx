@@ -33,7 +33,7 @@ export const NotePreview = ({ note, dense }: Props) => {
 
       <article className="md:grid md:grid-cols-4 md:items-baseline">
         <Card className="md:col-span-3">
-          <Card.Title href={`/${note.category ? note.category.toLowerCase() : 'notes'}/${note.slug}`}>
+          <Card.Title href={`/${note.slug}`}>
             {note.title}
           </Card.Title>
           <Card.Eyebrow

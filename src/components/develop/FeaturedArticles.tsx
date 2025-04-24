@@ -5,9 +5,15 @@ import { ArticleCard } from './ArticleCard';
 
 interface FeaturedArticlesProps {
   articles: DevelopNote[];
+  colorTheme?: string;
+  featuredBadgeColor?: string; // <-- Add this line
 }
 
-export const FeaturedArticles = ({ articles }: FeaturedArticlesProps) => {
+export const FeaturedArticles = ({
+  articles,
+  colorTheme,
+  featuredBadgeColor, // <-- Add this line
+}: FeaturedArticlesProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handlePrevious = () => {
@@ -23,68 +29,73 @@ export const FeaturedArticles = ({ articles }: FeaturedArticlesProps) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
-      className="lg:ml-8 lg:mr-8 md:ml-16 md:mr-16 sm:ml-18 sm:mr-18 mb-12 md:mb-8"
+      className="mb-12 md:mb-8"
     >
-      {/* <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 mb-6 md:mb-8">
-        Featured Articles
-      </h2>
-       */}
-      <div className="relative w-full">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentIndex}
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.5 }}
-            className="w-full max-w-5xl mx-auto"
-          >
-            <ArticleCard
-              article={articles[currentIndex]}
-              index={currentIndex}
-              isFeatured={true}
-              priority={true}
-            />
-          </motion.div>
-        </AnimatePresence>
-
+      <div className="relative rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white/70 dark:bg-zinc-900/70 shadow-none p-0 md:p-0">
+        {/* ^^^ removed overflow-hidden */}
+        <div className="relative w-full flex flex-col md:flex-row items-center gap-0 md:gap-8">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentIndex}
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -100 }}
+              transition={{ duration: 0.5 }}
+              className="w-full ml:mr-16 md:mb-8"
+            >
+              <div className="flex flex-col md:flex-row items-center">
+                <div className="flex-shrink-0">
+                  {/* You can add an image or icon here if needed */}
+                </div>
+                <div className="flex-1">
+                  <ArticleCard
+                    article={articles[currentIndex]}
+                    index={currentIndex}
+                    isFeatured={true}
+                    priority={true}
+                    featuredBadgeColor={featuredBadgeColor}
+                    colorTheme={colorTheme} // <-- Pass colorTheme here
+                  />
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
         {/* Navigation Buttons */}
-        <div className="absolute top-1/2 -translate-y-1/2 w-full flex justify-between px-2 sm:px-4 pointer-events-none">
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+        <div className="absolute bottom-4 right-4 flex gap-2 z-10">
+          <button
             onClick={handlePrevious}
-            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors pointer-events-auto"
+            className="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors flex items-center justify-center shadow-sm border border-zinc-200 dark:border-zinc-700"
+            aria-label="Previous"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 sm:w-6 sm:h-6">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
             </svg>
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+          </button>
+          <button
             onClick={handleNext}
-            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors pointer-events-auto"
+            className="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors flex items-center justify-center shadow-sm border border-zinc-200 dark:border-zinc-700"
+            aria-label="Next"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 sm:w-6 sm:h-6">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
               <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
             </svg>
-          </motion.button>
+          </button>
         </div>
-
         {/* Dots Indicator */}
-        <div className="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 sm:gap-2">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
           {articles.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
-              className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-colors ${
-                index === currentIndex ? 'bg-white' : 'bg-white/50'
+              className={`w-2 h-2 rounded-full transition-colors border border-zinc-300 dark:border-zinc-600 ${
+                index === currentIndex ? 'bg-zinc-800 dark:bg-zinc-100' : 'bg-zinc-200 dark:bg-zinc-700'
               }`}
+              aria-label={`Go to featured article ${index + 1}`}
             />
           ))}
         </div>
       </div>
     </motion.div>
   );
-}; 
+};

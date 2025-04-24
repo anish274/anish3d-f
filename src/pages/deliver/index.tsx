@@ -7,9 +7,9 @@ import { PageLayout } from '../../components/PageLayout';
 import { DevelopNote, developApi } from '../../lib/developApi';
 import { FeaturedArticles } from '../../components/develop/FeaturedArticles';
 import { RegularArticles } from '../../components/develop/RegularArticles';
-import { NewsletterSubscribe } from '../../components/develop/NewsletterSubscribe';
+import { NewsletterSubscribeDeliver } from '../../components/develop/NewsletterSubscribeDeliver';
 
-const seoTitle = 'Development - Tech Notes regarding building small tools, AI and other stuff';
+const seoTitle = 'Deliver/Direction - PM or other Notes regarding empowering team, small talks on business and product management';
 const seoDescription =
   'Explore my thoughts on programming, building products, AI, and tech leadership. A curated collection of development insights.';
 
@@ -19,37 +19,38 @@ interface Props {
 }
 
 export default function Notes({ notes, tags }: Props) {
-  // Filter notes for category "develop"
-  const developNotes = notes.filter(note => note.category === "develop" && !!note.publishedAt);
-  const featuredArticles = developNotes.filter(note => note.featured === true);
-  const regularArticles = developNotes.slice();
+  // Filter notes for category "deliver"
+  const deliverNotes = notes.filter(note => note.category === "deliver");
+  const featuredArticles = deliverNotes.filter(note => note.featured === true);
+  const regularArticles = deliverNotes.slice();
 
   return (
     <>
       <NextSeo
         title={seoTitle}
         description={seoDescription}
-        canonical={`${process.env.NEXT_PUBLIC_URL}/develop`}
+        canonical={`${process.env.NEXT_PUBLIC_URL}/deliver`}
         openGraph={{
           images: [{ url: `${process.env.NEXT_PUBLIC_URL}/api/og?title=${seoTitle}` }],
         }}
       />
       <PageLayout
-        title="Development - Tech Notes regarding building small tools, AI and other stuff."
-        intro="A curated collection of thoughts on programming, building small tools, AI, and tech leadership. Not with expertise, but hopefully useful."
+        title="Delivery / Directing Project - Notes on product management, business and team."
+        intro="A curated collection of thoughts on product/project management, relevant Certifications, team leadership and PM tools."
         heroImage="/images/develop-hero.png"
+        heroImageClassName="filter blur-sm"
       >
-        <div className="relative ml-8 mr-8">
+        <div className="relative mx-2 sm:mx-8">
           {/* Show message if no notes found */}
           {notes.length === 0 ? (
             <div className="text-center text-lg text-zinc-500 my-12">No notes found</div>
           ) : (
             <>
               {/* Featured Articles */}
-              <FeaturedArticles articles={featuredArticles} />
+              <FeaturedArticles articles={featuredArticles} featuredBadgeColor="bg-blue-600" colorTheme="blue" />
 
               {/* Newsletter Section */}
-              <NewsletterSubscribe />
+              <NewsletterSubscribeDeliver />
 
               {/* Regular Articles */}
               <RegularArticles articles={regularArticles} />
