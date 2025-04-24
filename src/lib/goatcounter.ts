@@ -20,8 +20,6 @@ export async function getPageViews(path: string, siteCode: string = 'anish3d'): 
     // GoatCounter API endpoint for page views
     // Note: You'll need to set up CORS or use a server-side API route for this in production
     const apiUrl = `https://${siteCode}.goatcounter.com/api/v0/count`;
-    
-    // Add query parameters for filtering by path
     const url = new URL(apiUrl);
     url.searchParams.append('path', path);
     
@@ -29,8 +27,7 @@ export async function getPageViews(path: string, siteCode: string = 'anish3d'): 
     // This is a simplified example - in production use an API route with proper auth
     const response = await fetch(url.toString(), {
       headers: {
-        // You would add your API key here in a real implementation
-        // 'Authorization': 'Bearer YOUR_API_KEY',
+         'Authorization': 'Bearer GOAT_API_KEY',
       },
     });
 

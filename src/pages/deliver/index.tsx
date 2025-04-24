@@ -7,7 +7,7 @@ import { PageLayout } from '../../components/PageLayout';
 import { DevelopNote, developApi } from '../../lib/developApi';
 import { FeaturedArticles } from '../../components/develop/FeaturedArticles';
 import { RegularArticles } from '../../components/develop/RegularArticles';
-import { NewsletterSubscribeDeliver } from '../../components/develop/NewsletterSubscribeDeliver';
+import { NewsletterSubscribe } from '../../components/develop/NewsletterSubscribe';
 
 const seoTitle = 'Deliver/Direction - PM or other Notes regarding empowering team, small talks on business and product management';
 const seoDescription =
@@ -16,9 +16,12 @@ const seoDescription =
 interface Props {
   notes: DevelopNote[];
   tags: Array<string>;
+  newsletterTitle: string;
+  newsletterDesc: string;
+  newsletterListId: string;
 }
 
-export default function Notes({ notes, tags }: Props) {
+export default function Notes({ notes, tags, newsletterTitle, newsletterDesc, newsletterListId }: Props) {
   // Filter notes for category "deliver"
   const deliverNotes = notes.filter(note => note.category === "deliver");
   const featuredArticles = deliverNotes.filter(note => note.featured === true);
@@ -37,7 +40,7 @@ export default function Notes({ notes, tags }: Props) {
       <PageLayout
         title="Delivery / Directing Project - Notes on product management, business and team."
         intro="A curated collection of thoughts on product/project management, relevant Certifications, team leadership and PM tools."
-        heroImage="/images/develop-hero.png"
+        heroImage="/images/deliver-hero.jpg"
         heroImageClassName="filter blur-sm"
       >
         <div className="relative mx-2 sm:mx-8">
@@ -50,7 +53,12 @@ export default function Notes({ notes, tags }: Props) {
               <FeaturedArticles articles={featuredArticles} featuredBadgeColor="bg-blue-600" colorTheme="blue" />
 
               {/* Newsletter Section */}
-              <NewsletterSubscribeDeliver />
+              <NewsletterSubscribe
+                colorTheme="blue"
+                title={newsletterTitle}
+                description={newsletterDesc}
+                listId={newsletterListId}
+              />
 
               {/* Regular Articles */}
               <RegularArticles articles={regularArticles} />
@@ -92,6 +100,9 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       props: {
         notes,
         tags: Array.from(new Set(notes.map((post) => post.tags).flat())),
+        newsletterTitle: process.env.NEWSLETTER_DELIVER_TITLE || '',
+        newsletterDesc: process.env.NEWSLETTER_DELIVER_DESC || '',
+        newsletterListId: process.env.NEWSLETTER_DELIVER_LIST_ID || '',
       },
       revalidate: 10,
     };
@@ -101,6 +112,9 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       props: {
         notes: [],
         tags: [],
+        newsletterTitle: '',
+        newsletterDesc: '',
+        newsletterListId: '',
       },
       revalidate: 10,
     };
