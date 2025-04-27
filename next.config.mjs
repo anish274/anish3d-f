@@ -24,7 +24,7 @@ const config = {
         hostname: 'prod-files-secure.s3.us-west-2.amazonaws.com',
       },
     ],
-    domains: ['anish3d.com', 'develop.anish3d.com'],
+    domains: ['anish3d.com', 'res.cloudinary.com'],
   },
   async redirects() {
     return [
